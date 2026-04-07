@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>🏓 Beerpong – Gruppenauslosung</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{min-height:100%;overflow-x:hidden;}
+body{
+  background:radial-gradient(ellipse at 50% 0%,#1a0a00 0%,#0a0005 60%,#000 100%);
+  font-family:Arial,sans-serif;color:#fff;
+  display:flex;flex-direction:column;align-items:center;
+  padding:24px 12px 60px;
+}
+.page-header{text-align:center;margin-bottom:20px;}
+.page-logo{font-size:.75rem;letter-spacing:5px;color:rgba(255,215,0,0.35);text-transform:uppercase;margin-bottom:8px;}
+.page-title{
+  font-size:clamp(1.6rem,7vw,2.6rem);font-weight:900;letter-spacing:3px;
+  background:linear-gradient(135deg,#ffd700,#ff8c00,#ff4500);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:titlePulse 3s ease-in-out infinite;
+}
+@keyframes titlePulse{0%,100%{filter:brightness(1);}50%{filter:brightness(1.5);}}
+.team-selector{
+  width:100%;max-width:320px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,215,0,0.2);
+  border-radius:16px;padding:16px;
+  display:flex;flex-direction:column;gap:10px;
+  margin-bottom:20px;text-align:center;
+}
+.sel-label{font-size:.7rem;letter-spacing:3px;color:rgba(255,215,0,0.5);text-transform:uppercase;}
+.team-select{
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.2);
+  border-radius:10px;color:#fff;padding:12px 14px;
+  font-size:1rem;font-weight:700;cursor:pointer;outline:none;width:100%;
+}
+.team-select option{background:#1a1a2e;}
+/* ===== FULL SLOT MACHINE ===== */
+.slot-machine{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width:min(90vw,320px);
+  margin-bottom:20px;
+  filter:drop-shadow(0 0 40px rgba(255,150,0,0.3));
+}
+/* TOPPER */
+.sm-topper{
+  width:80%;
+  background:linear-gradient(180deg,#4a0000,#800000,#4a0000);
+  border:3px solid #ffd700;
+  border-bottom:none;
+  border-radius:16px 16px 0 0;
+  padding:8px 10px 12px;
+  text-align:center;
+  position:relative;
+  z-index:2;
+  box-shadow:0 -6px 24px rgba(255,80,0,0.4),inset 0 1px 0 rgba(255,215,0,0.3);
+}
+.topper-lights{
+  display:flex;justify-content:center;gap:5px;margin-bottom:5px;
+}
+.tl{
+  width:8px;height:8px;border-radius:50%;
+  animation:tlblink 1s ease-in-out infinite;
+}
+.tl:nth-child(odd){background:#ffd700;box-shadow:0 0 8px #ffd700;}
+.tl:nth-child(even){background:#ff4500;box-shadow:0 0 8px #ff4500;animation-delay:.5s;}
+@keyframes tlblink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.topper-title{
+  font-size:clamp(.9rem,4vw,1.15rem);font-weight:900;letter-spacing:4px;
+  text-transform:uppercase;
+  background:linear-gradient(180deg,#fff8dc,#ffd700,#b8860b);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.topper-sub{font-size:.5rem;letter-spacing:4px;color:rgba(255,215,0,0.45);margin-top:2px;}
+/* MAIN BODY */
+.sm-body{
+  width:100%;
+  background:linear-gradient(160deg,#1c0800,#2e1200,#180600);
+  border:3px solid #ffd700;
+  border-radius:6px 6px 2px 2px;
+  position:relative;
+  overflow:visible;
+  box-shadow:
+    0 0 0 1px #8a5a00,
+    inset 2px 0 10px rgba(255,215,0,0.04),
+    inset -2px 0 10px rgba(255,215,0,0.04),
+    inset 0 0 40px rgba(0,0,0,0.7);
+  padding:14px 14px 18px;
+}
+/* golden top trim */
+.sm-body::before{
+  content:'';position:absolute;top:6px;left:6px;right:6px;height:2px;
+  background:linear-gradient(90deg,transparent,#ffd700,#ff8c00,#ffd700,transparent);
+  opacity:.5;
+}
+/* side decoration dots */
+.sm-side{
+  position:absolute;top:16px;bottom:16px;width:12px;
+  display:flex;flex-direction:column;justify-content:space-around;align-items:center;
+}
+.sm-side.l{left:4px;}
+.sm-side.r{right:4px;}
+.sd{
+  width:7px;height:7px;border-radius:50%;
+  animation:tlblink 2s ease-in-out infinite;
+}
+.sm-side.l .sd:nth-child(odd){background:#ffd700;box-shadow:0 0 5px #ffd700;}
+.sm-side.l .sd:nth-child(even){background:#ff4500;box-shadow:0 0 5px #ff4500;animation-delay:.4s;}
+.sm-side.r .sd:nth-child(odd){background:#ff4500;box-shadow:0 0 5px #ff4500;}
+.sm-side.r .sd:nth-child(even){background:#ffd700;box-shadow:0 0 5px #ffd700;animation-delay:.7s;}
+/* pay table */
+.pay-strip{
+  display:flex;justify-content:space-around;
+  background:rgba(0,0,0,0.5);
+  border:1px solid rgba(255,215,0,0.2);
+  border-radius:5px;padding:4px 8px;
+  font-size:.55rem;letter-spacing:2px;color:rgba(255,215,0,0.55);
+  margin-bottom:12px;
+}
+/* REEL FRAME */
+.reel-frame{
+  background:#000;
+  border:3px solid #7a4a00;
+  border-radius:8px;
+  box-shadow:0 0 0 2px #ffd700, inset 0 0 30px rgba(0,0,0,.9), 0 0 20px rgba(255,150,0,0.25);
+  position:relative;
+  margin:0 18px;
+}
+.reel-inner{
+  height:160px;overflow:hidden;border-radius:5px;
+  position:relative;
+}
+.reel-inner::before,.reel-inner::after{
+  content:'';position:absolute;left:0;right:0;height:52px;z-index:3;pointer-events:none;
+}
+.reel-inner::before{top:0;background:linear-gradient(to bottom,rgba(0,0,0,.95),transparent);}
+.reel-inner::after{bottom:0;background:linear-gradient(to top,rgba(0,0,0,.95),transparent);}
+.win-line{
+  position:absolute;top:50%;transform:translateY(-50%);
+  left:-3px;right:-3px;height:62px;z-index:4;pointer-events:none;
+  border-top:2px solid rgba(255,215,0,.8);
+  border-bottom:2px solid rgba(255,215,0,.8);
+  box-shadow:0 -1px 10px rgba(255,215,0,.4),0 1px 10px rgba(255,215,0,.4);
+}
+.screw{
+  position:absolute;width:9px;height:9px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#aaa,#444);
+  border:1px solid #555;z-index:5;
+}
+.screw.tl{top:-2px;left:-2px;} .screw.tr{top:-2px;right:-2px;}
+.screw.bl{bottom:-2px;left:-2px;} .screw.br{bottom:-2px;right:-2px;}
+.reel{display:flex;flex-direction:column;will-change:transform;}
+.reel-item{
+  height:160px;flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+}
+.reel-letter{font-size:4rem;font-weight:900;line-height:1;}
+.reel-gname{font-size:.62rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;}
+/* CONTROLS BELOW REEL */
+.sm-controls{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  margin-top:14px;
+}
+.coin-slot{width:44px;height:8px;background:linear-gradient(180deg,#111,#333);border-radius:4px;border:2px solid #555;box-shadow:inset 0 2px 4px rgba(0,0,0,.8);transition:all .3s;cursor:pointer;}
+.coin-slot-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;}
+.coin-slot-wrap.coin-ready .coin-slot{border-color:#ffd700;box-shadow:0 0 14px #ffd700,inset 0 2px 4px rgba(0,0,0,.8);animation:coinPulse 1s ease-in-out infinite;}
+.coin-slot-wrap.coin-inserted .coin-slot{border-color:#00ff88;box-shadow:0 0 12px #00ff88;}
+@keyframes coinPulse{0%,100%{box-shadow:0 0 6px #ffd700,inset 0 2px 4px rgba(0,0,0,.8);}50%{box-shadow:0 0 20px #ffd700,inset 0 2px 4px rgba(0,0,0,.8);}}
+@keyframes coinDrop{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(60px) scale(.4);}}
+.coin-label{font-size:.45rem;letter-spacing:2px;color:rgba(255,215,0,0.3);text-transform:uppercase;margin-top:2px;}
+.sm-status{font-size:.68rem;font-weight:700;letter-spacing:2px;color:rgba(255,215,0,.7);text-transform:uppercase;min-height:16px;text-align:center;}
+/* countdown ring */
+.cring{position:relative;width:52px;height:52px;display:none;}
+.cring svg{transform:rotate(-90deg);}
+.cring circle{fill:none;stroke:rgba(255,215,0,0.15);stroke-width:4;}
+.cprog{stroke:#ffd700;stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset 1s linear;}
+.cring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:900;color:#ffd700;}
+/* LEVER */
+.sm-lever{
+  position:absolute;
+  right:-54px;
+  top:20px;
+  width:54px;
+  display:flex;flex-direction:column;align-items:center;
+  cursor:pointer;user-select:none;z-index:10;
+  transition:opacity .3s;
+}
+.sm-lever.locked{opacity:.25;pointer-events:none;}
+.lever-plate{
+  width:22px;height:76px;
+  background:linear-gradient(180deg,#666,#3a3a3a,#222);
+  border-radius:5px;border:1px solid rgba(255,215,0,0.25);
+  position:relative;
+  box-shadow:inset 0 2px 6px rgba(0,0,0,.7),2px 0 6px rgba(0,0,0,.4);
+}
+.lever-plate::before,.lever-plate::after{
+  content:'';position:absolute;left:50%;transform:translateX(-50%);
+  width:6px;height:6px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#aaa,#444);
+  border:1px solid #555;
+}
+.lever-plate::before{top:5px;} .lever-plate::after{bottom:5px;}
+.lever-rod-wrap{
+  position:absolute;
+  bottom:10px;left:50%;
+  transform-origin:bottom center;
+  transform:translateX(-50%) rotate(0deg);
+  transition:transform .4s cubic-bezier(.4,0,.2,1);
+}
+.lever-rod-wrap.idle-anim{animation:leverBob 2.2s ease-in-out infinite;}
+.lever-rod-wrap.pulled{transform:translateX(-50%) rotate(46deg)!important;animation:none!important;}
+@keyframes leverBob{
+  0%,100%{transform:translateX(-50%) rotate(0deg);}
+  50%{transform:translateX(-50%) rotate(-10deg);}
+}
+.lever-rod{
+  width:11px;height:80px;
+  background:linear-gradient(90deg,#c8a800,#ffd700,#fff5a0,#ffd700,#a07000);
+  border-radius:5px;
+  box-shadow:0 0 12px rgba(255,215,0,.5);
+}
+.lever-knob{
+  width:34px;height:34px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff8dc,#ffd700 40%,#b8860b 80%,#7a4a00);
+  border:2px solid rgba(255,215,0,.6);
+  box-shadow:0 0 18px rgba(255,215,0,.9),0 0 36px rgba(255,140,0,.4),0 5px 10px rgba(0,0,0,.6),inset 0 2px 3px rgba(255,255,255,.3);
+  position:absolute;
+  top:-17px;left:50%;transform:translateX(-50%);
+}
+.lever-socket{
+  width:30px;height:18px;
+  background:linear-gradient(180deg,#666,#333);
+  border-radius:5px;
+  border:1px solid rgba(255,215,0,.3);
+  box-shadow:0 4px 8px rgba(0,0,0,.7);
+  margin-top:-2px;
+}
+.lever-hint{
+  margin-top:7px;font-size:.55rem;letter-spacing:1px;
+  color:rgba(255,215,0,.45);text-align:center;line-height:1.3;
+}
+.lever-hint.active{color:rgba(255,215,0,.9);animation:hb 1.3s ease-in-out infinite;}
+@keyframes hb{0%,100%{opacity:.4;}50%{opacity:1;}}
+/* BASE */
+.sm-base{
+  width:108%;
+  height:20px;
+  background:linear-gradient(180deg,#ffd700,#b8860b,#7a4a00);
+  border-radius:0 0 16px 16px;
+  box-shadow:0 6px 16px rgba(0,0,0,.7);
+  display:flex;align-items:center;justify-content:center;
+}
+.sm-base-text{font-size:.45rem;letter-spacing:4px;color:rgba(0,0,0,.4);font-weight:700;text-transform:uppercase;}
+.sm-tray{
+  width:50%;height:24px;
+  background:linear-gradient(180deg,#111,#1a1a1a);
+  border:2px solid #5a3a00;
+  border-top:none;
+  border-radius:0 0 20px 20px;
+  box-shadow:inset 0 3px 8px rgba(0,0,0,.8);
+}
+/* RESULT */
+.result-area{display:none;flex-direction:column;align-items:center;gap:18px;width:100%;max-width:320px;animation:fadeUp .7s ease-out;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.group-badge{padding:18px 36px;border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.big-letter{font-size:clamp(4rem,18vw,6rem);font-weight:900;line-height:1;animation:glow 2s ease-in-out infinite;}
+@keyframes glow{0%,100%{filter:brightness(1);}50%{filter:brightness(1.6) drop-shadow(0 0 20px currentColor);}}
+.big-gname{font-size:clamp(1rem,4vw,1.3rem);font-weight:700;letter-spacing:3px;}
+.congrats{font-size:.9rem;font-weight:600;color:rgba(255,255,255,.5);line-height:1.8;text-align:center;}
+.mates-box{width:100%;border-radius:12px;padding:16px;background:rgba(255,255,255,0.03);}
+.mates-title{font-size:.6rem;letter-spacing:3px;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.07);text-align:center;}
+.mate-row{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:7px;margin-bottom:5px;font-size:.88rem;font-weight:700;}
+.beers{display:flex;gap:10px;font-size:1.8rem;justify-content:center;animation:wave 1.2s ease-in-out infinite;}
+@keyframes wave{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.reset-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:50px;color:rgba(255,255,255,.5);font-size:.8rem;font-weight:700;letter-spacing:2px;padding:12px 28px;cursor:pointer;text-transform:uppercase;transition:all .25s;}
+.reset-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
+.fw-c{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden;}
+.fw{position:absolute;border-radius:50%;animation:fwE 1s ease-out forwards;}
+@keyframes fwE{0%{opacity:1;transform:translate(0,0);}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0);}}
+</style>
+</head>
+<body>
+<div class="fw-c" id="fwc"></div>
+<div class="page-header">
+  <div class="page-logo">🏓 Beerpong Turnier 2026</div>
+  <div id="teamDisplay" style="display:none;font-size:clamp(1rem,4vw,1.4rem);font-weight:900;letter-spacing:3px;text-align:center;margin:6px 0 2px;padding:8px 24px;border-radius:50px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.35);color:#ffd700;"></div>
+<div class="page-title">🎰 AUSLOSUNG</div>
+</div>
+
+<div class="team-selector" id="selectorBox">
+  <div class="sel-label">👇 Wähle dein Team</div>
+  <select class="team-select" id="teamSelect" onchange="onTeamSelect()"></select>
+  <div style="font-size:.62rem;color:rgba(255,255,255,.3);letter-spacing:1px;">Dann Hebel am Automaten ziehen!</div>
+</div>
+
+<!-- FULL SLOT MACHINE -->
+<div class="slot-machine" id="machineScene">
+  <!-- Topper -->
+  <div class="sm-topper">
+    <div class="topper-lights">
+      <div class="tl"></div><div class="tl"></div><div class="tl"></div>
+      <div class="tl"></div><div class="tl"></div><div class="tl"></div>
+      <div class="tl"></div><div class="tl"></div>
+    </div>
+    <div class="topper-title">BEERPONG</div>
+    <div class="topper-sub">⚡ GRUPPEN AUSLOSUNG ⚡</div>
+  </div>
+
+  <!-- Body -->
+  <div class="sm-body">
+    <div class="sm-side l">
+      <div class="sd"></div><div class="sd"></div><div class="sd"></div>
+      <div class="sd"></div><div class="sd"></div>
+    </div>
+    <div class="sm-side r">
+      <div class="sd"></div><div class="sd"></div><div class="sd"></div>
+      <div class="sd"></div><div class="sd"></div>
+    </div>
+
+    <div class="pay-strip">
+      <span>🍺 PROST</span><span>🏓 MATCH</span><span>🏆 CHAMP</span>
+    </div>
+
+    <div class="reel-frame">
+      <div class="screw tl"></div><div class="screw tr"></div>
+      <div class="screw bl"></div><div class="screw br"></div>
+      <div class="reel-inner">
+        <div class="reel" id="reel">
+          <div class="reel-item">
+            <div class="reel-letter" style="color:#ffd700;text-shadow:0 0 20px #ffd70088">?</div>
+            <div class="reel-gname" style="color:#ffd700">Wähle Team</div>
+          </div>
+        </div>
+      </div>
+      <div class="win-line"></div>
+    </div>
+
+    <div class="sm-controls">
+      <div class="cring" id="cring">
+        <svg width="52" height="52" viewBox="0 0 52 52">
+          <circle cx="26" cy="26" r="22"/>
+          <circle class="cprog" id="cprog" cx="26" cy="26" r="22" stroke-dasharray="138" stroke-dashoffset="0"/>
+        </svg>
+        <div class="cring-num" id="cringNum">30</div>
+      </div>
+      <div class="sm-status" id="spinStatus">Wähle dein Team!</div>
+      <div class="coin-slot-wrap" id="coinSlotWrap" onclick="insertCoin()">
+        <div class="coin-slot" id="coinSlot"></div>
+        <div class="coin-label" id="coinLabel">🪙 INSERT COIN</div>
+      </div>
+    </div>
+
+    <!-- LEVER -->
+    <div class="sm-lever locked" id="leverEl" onclick="startSpin()">
+      <div class="lever-plate">
+        <div class="lever-rod-wrap idle-anim" id="leverRod">
+          <div class="lever-knob"></div>
+          <div class="lever-rod"></div>
+        </div>
+      </div>
+      <div class="lever-socket"></div>
+      <div class="lever-hint" id="leverHint">⬆ Team<br>wählen</div>
+    </div>
+  </div>
+
+  <!-- Base -->
+  <div class="sm-base"><div class="sm-base-text">★ Lucky Beerpong 3000 ★</div></div>
+  <div class="sm-tray"></div>
+</div>
+
+<!-- RESULT -->
+<div class="result-area" id="resultArea">
+  <div class="group-badge" id="groupBadge">
+    <div class="big-letter" id="bigLetter"></div>
+    <div class="big-gname" id="bigGname"></div>
+  </div>
+  <div class="congrats" id="congratsTxt"></div>
+  <div class="mates-box" id="matesBox" style="display:none">
+    <div class="mates-title">👥 Eure Gruppe</div>
+    <div id="matesList"></div>
+  </div>
+  <div class="beers">🍺🏓🏆🏓🍺</div>
+  <button class="reset-btn" onclick="resetPage()">↩ Anderes Team</button>
+</div>
+
+<script>
+(function(){
+  var RESULTS=[{"team":"Nass & Spaß","groupIdx":0,"groupMembers":["Nass & Spaß","Triple Threat"]},{"team":"Schaumkronen FC","groupIdx":1,"groupMembers":["Schaumkronen FC","Shot Stars"]},{"team":"Hopfen & Malz","groupIdx":2,"groupMembers":["Hopfen & Malz","Die Untrinkbaren"]},{"team":"Die Bierkönige","groupIdx":3,"groupMembers":["Die Bierkönige","Schaum Alarm"]},{"team":"Triple Threat","groupIdx":0,"groupMembers":["Nass & Spaß","Triple Threat"]},{"team":"Shot Stars","groupIdx":1,"groupMembers":["Schaumkronen FC","Shot Stars"]},{"team":"Die Untrinkbaren","groupIdx":2,"groupMembers":["Hopfen & Malz","Die Untrinkbaren"]},{"team":"Schaum Alarm","groupIdx":3,"groupMembers":["Die Bierkönige","Schaum Alarm"]}];
+  var GNAMES=["Gruppe A","Gruppe B","Gruppe C","Gruppe D"];
+  var COLORS=["#ff7070","#7aaaff","#70ff70","#ffd070"];
+  var BG=["rgba(255,80,80,0.15)","rgba(80,140,255,0.15)","rgba(80,220,80,0.15)","rgba(255,190,60,0.15)"];
+  var ITEM_H=160,SPIN_SECS=30;
+
+  var sel=document.getElementById('teamSelect');
+  RESULTS.forEach(function(r){
+    var o=document.createElement('option');o.value=r.team;o.textContent=r.team;
+    sel.appendChild(o);
+  });
+  var ph=document.createElement('option');ph.value='';ph.textContent='-- Team auswählen --';
+  sel.insertBefore(ph,sel.firstChild);sel.value='';
+
+  var coinInserted=false;
+
+  window.onTeamSelect=function(){
+    var td=document.getElementById('teamDisplay');
+    var csw=document.getElementById('coinSlotWrap');
+    var cl=document.getElementById('coinLabel');
+    var lv=document.getElementById('leverEl');
+    var hint=document.getElementById('leverHint');
+    var rod=document.getElementById('leverRod');
+    // reset coin state on new selection
+    coinInserted=false;
+    lv.classList.add('locked');
+    rod.classList.remove('idle-anim');
+    hint.innerHTML='⬆ Münze<br>einwerfen';
+    hint.classList.remove('active');
+    if(csw){csw.classList.remove('coin-ready');csw.classList.remove('coin-inserted');}
+    if(cl){cl.textContent='🪙 INSERT COIN';}
+    document.getElementById('spinStatus').textContent='Wähle dein Team!';
+    if(sel.value!==''){
+      td.textContent='👤 '+sel.value;
+      td.style.display='block';
+      if(csw)csw.classList.add('coin-ready');
+      document.getElementById('spinStatus').textContent='🪙 Münze einwerfen!';
+    } else {
+      td.style.display='none';
+    }
+  };
+
+  window.insertCoin=function(){
+    if(!sel.value||coinInserted)return;
+    coinInserted=true;
+    var csw=document.getElementById('coinSlotWrap');
+    var cl=document.getElementById('coinLabel');
+    var lv=document.getElementById('leverEl');
+    var hint=document.getElementById('leverHint');
+    var rod=document.getElementById('leverRod');
+    if(csw){csw.classList.remove('coin-ready');csw.classList.add('coin-inserted');}
+    if(cl){cl.textContent='✅ EINGEWORFEN';}
+    document.getElementById('spinStatus').textContent='✅ Jetzt Hebel ziehen!';
+    lv.classList.remove('locked');
+    hint.textContent='⬇ Ziehen!';
+    hint.classList.add('active');
+    rod.classList.add('idle-anim');
+    // coin drop animation
+    var coin=document.createElement('div');
+    coin.style.cssText='position:fixed;font-size:1.8rem;z-index:9999;pointer-events:none;animation:coinDrop .65s ease-in forwards;';
+    coin.textContent='🪙';
+    var slot=document.getElementById('coinSlot');
+    if(slot){var r=slot.getBoundingClientRect();coin.style.left=(r.left+r.width/2-14)+'px';coin.style.top=r.top+'px';}
+    document.body.appendChild(coin);
+    setTimeout(function(){coin.remove();},800);
+  };
+
+  var spinning=false;
+  window.startSpin=function(){
+    if(spinning||!coinInserted)return;
+    var teamName=sel.value;if(!teamName)return;
+    var entry=RESULTS.find(function(r){return r.team===teamName;});if(!entry)return;
+    spinning=true;
+    var rod=document.getElementById('leverRod');
+    var lv=document.getElementById('leverEl');
+    lv.classList.add('locked');
+    rod.classList.remove('idle-anim');
+    rod.classList.add('pulled');
+    setTimeout(function(){
+      rod.classList.remove('pulled');
+    },500);
+    document.getElementById('selectorBox').style.display='none';
+    document.getElementById('spinStatus').textContent='Dreht sich...';
+    setTimeout(function(){runSlot(entry,teamName);},750);
+  };
+
+  function runSlot(entry,teamName){
+    var gIdx=entry.groupIdx,gName=GNAMES[gIdx],gColor=COLORS[gIdx],gBg=BG[gIdx];
+    var gLetter=String.fromCharCode(65+gIdx);
+    var mates=(entry.groupMembers||[]).filter(function(t){return t!==teamName;});
+    var nG=GNAMES.length;
+    var items=[],FAST_N=60*nG,SLOW_N=nG*2;
+    for(var i=0;i<FAST_N;i++){var g=i%nG;items.push({letter:String.fromCharCode(65+g),name:GNAMES[g],color:COLORS[g]});}
+    for(var s=0;s<SLOW_N;s++){var g2=s%nG;items.push({letter:String.fromCharCode(65+g2),name:GNAMES[g2],color:COLORS[g2]});}
+    var overG=(gIdx+1)%nG;
+    items.push({letter:String.fromCharCode(65+overG),name:GNAMES[overG],color:COLORS[overG]});
+    var overIdx=items.length-1;
+    items.push({letter:gLetter,name:gName,color:gColor});
+    var tIdx=items.length-1;
+    var reel=document.getElementById('reel');
+    reel.innerHTML='';
+    items.forEach(function(item){
+      var el=document.createElement('div');el.className='reel-item';
+      el.innerHTML='<div class="reel-letter" style="color:'+item.color+';text-shadow:0 0 24px '+item.color+'99">'+item.letter+'</div>'
+        +'<div class="reel-gname" style="color:'+item.color+'">'+item.name+'</div>';
+      reel.appendChild(el);
+    });
+    reel.style.transition='none';reel.style.transform='translateY(0)';
+    var T1=21000,T2=4800,T3=650,T4=900,REVEAL=29000;
+    setTimeout(function(){reel.style.transition='transform '+T1+'ms cubic-bezier(0.08,0,0.1,1)';reel.style.transform='translateY(-'+(FAST_N*ITEM_H)+'px)';},60);
+    setTimeout(function(){reel.style.transition='transform '+T2+'ms cubic-bezier(0.35,0,0.05,1)';reel.style.transform='translateY(-'+((FAST_N+SLOW_N)*ITEM_H)+'px)';},T1+80);
+    setTimeout(function(){reel.style.transition='transform '+T3+'ms cubic-bezier(0.2,0,0.5,1)';reel.style.transform='translateY(-'+(overIdx*ITEM_H)+'px)';},T1+T2+100);
+    setTimeout(function(){reel.style.transition='transform '+T4+'ms cubic-bezier(0.175,0.885,0.32,1.55)';reel.style.transform='translateY(-'+(tIdx*ITEM_H)+'px)';},T1+T2+T3+150);
+    var cr=document.getElementById('cring'),cp=document.getElementById('cprog'),cn=document.getElementById('cringNum');
+    cr.style.display='block';cp.style.strokeDashoffset='0';
+    var t0=Date.now();
+    var cInt=setInterval(function(){var e=(Date.now()-t0)/1000,r=Math.max(0,SPIN_SECS-e);cn.textContent=Math.ceil(r);cp.style.strokeDashoffset=String(138*(e/SPIN_SECS));if(r<=0)clearInterval(cInt);},100);
+    var msgs=['Dreht sich...','🍺 Beerpong Spirit!','Spannung steigt...','Fast da...','🤏 Fingers crossed!','Wer wird es sein?','🎉 Gleich!'];
+    var mi=0,ste=document.getElementById('spinStatus');ste.textContent=msgs[0];
+    var sInt=setInterval(function(){mi=(mi+1)%msgs.length;ste.textContent=msgs[mi];},4000);
+    setTimeout(function(){clearInterval(sInt);clearInterval(cInt);showResult(gIdx,gName,gColor,gBg,gLetter,mates,teamName);},REVEAL);
+  }
+
+  function showResult(gIdx,gName,gColor,gBg,gLetter,mates,teamName){
+    document.getElementById('cring').style.display='none';
+    document.getElementById('spinStatus').textContent='';
+    document.getElementById('machineScene').style.display='none';
+    var badge=document.getElementById('groupBadge');
+    badge.style.border='2px solid '+gColor;badge.style.background=gBg;badge.style.boxShadow='0 0 60px '+gColor+'44';
+    document.getElementById('bigLetter').textContent=gLetter;document.getElementById('bigLetter').style.color=gColor;
+    document.getElementById('bigGname').textContent=gName;document.getElementById('bigGname').style.color=gColor;
+    // keep teamDisplay visible during result
+    var td=document.getElementById('teamDisplay');
+    if(teamName){td.textContent='👤 '+teamName;td.style.display='block';}
+    document.getElementById('congratsTxt').innerHTML='🏆 <strong style="color:'+gColor+'">'+teamName+'</strong> ist in der <strong style="color:'+gColor+'">'+gName+'</strong>!';
+    document.getElementById('resultArea').style.display='flex';
+    fw(gColor);fw(gColor);
+    setTimeout(function(){fw(gColor);},600);setTimeout(function(){fw(gColor);},1200);setTimeout(function(){fw(gColor);},2200);
+    setTimeout(function(){
+      var allInGroup=RESULTS.filter(function(r){return r.groupIdx===gIdx;}).map(function(r){return r.team;});
+      if(allInGroup.length>0){
+        var mb=document.getElementById('matesBox'),ml=document.getElementById('matesList');
+        mb.style.border='1px solid '+gColor+'44';
+        allInGroup.forEach(function(name){
+          var row=document.createElement('div');row.className='mate-row';
+          row.style.background=gBg;row.style.border='1px solid '+gColor+'33';
+          var icon=name===teamName?'⭐':'🏓';
+          var tag=name===teamName?' <span style="font-size:.7rem;opacity:.55;">(du)</span>':'';
+          row.innerHTML='<span>'+icon+'</span>'+name+tag;
+          ml.appendChild(row);
+        });
+        mb.style.display='block';
+      }
+    },900);
+  }
+
+  window.resetPage=function(){
+    coinInserted=false;
+    spinning=false;
+    document.getElementById('resultArea').style.display='none';
+    document.getElementById('matesList').innerHTML='';
+    document.getElementById('matesBox').style.display='none';
+    document.getElementById('machineScene').style.display='flex';
+    var reel=document.getElementById('reel');reel.innerHTML='<div class="reel-item"><div class="reel-letter" style="color:#ffd700;text-shadow:0 0 20px #ffd70088">?</div><div class="reel-gname" style="color:#ffd700">Wähle Team</div></div>';
+    document.getElementById('teamSelect').value='';
+    document.getElementById('leverEl').classList.add('locked');
+    var rod=document.getElementById('leverRod');rod.classList.remove('pulled');rod.classList.remove('idle-anim');
+    document.getElementById('leverHint').innerHTML='⬆ Team<br>wählen';
+    document.getElementById('leverHint').classList.remove('active');
+    document.getElementById('selectorBox').style.display='flex';
+    document.getElementById('spinStatus').textContent='Wähle dein Team!';
+    document.getElementById('cring').style.display='none';
+    document.getElementById('teamDisplay').style.display='none';
+    var csw=document.getElementById('coinSlotWrap');
+    if(csw){csw.classList.remove('coin-ready');csw.classList.remove('coin-inserted');}
+    var cl=document.getElementById('coinLabel');
+    if(cl){cl.textContent='🪙 INSERT COIN';}
+  };
+
+  function fw(col){
+    var c=document.getElementById('fwc');
+    var cols=[col,'#ffd700','#ff4500','#fff','#ff69b4','#00bfff'];
+    var cx=10+Math.random()*80,cy=5+Math.random()*55;
+    for(var i=0;i<55;i++){
+      var p=document.createElement('div');p.className='fw';
+      var a=(i/55)*Math.PI*2,d=80+Math.random()*150;
+      p.style.cssText='left:'+cx+'%;top:'+cy+'%;background:'+cols[~~(Math.random()*cols.length)]+';width:'+(3+Math.random()*5)+'px;height:'+(3+Math.random()*5)+'px;--tx:'+Math.cos(a)*d+'px;--ty:'+Math.sin(a)*d+'px;animation-duration:'+(0.8+Math.random()*.7)+'s;animation-delay:'+Math.random()*.3+'s;';
+      c.appendChild(p);setTimeout(function(){p.remove();},2500);
+    }
+  }
+})();
+</script>
+</body>
+</html>
