@@ -323,7 +323,7 @@ body::before{
 
 <script>
 (function(){
-  var RESULTS = [{"team":"Die Untrinkbaren","groupIdx":0,"groupMembers":["Die Untrinkbaren","Hopfen & Malz","Die Bierkönige"]},{"team":"Triple Threat","groupIdx":1,"groupMembers":["Triple Threat","Schaumkronen FC","Shot Stars"]},{"team":"Hopfen & Malz","groupIdx":0,"groupMembers":["Die Untrinkbaren","Hopfen & Malz","Die Bierkönige"]},{"team":"Schaumkronen FC","groupIdx":1,"groupMembers":["Triple Threat","Schaumkronen FC","Shot Stars"]},{"team":"Die Bierkönige","groupIdx":0,"groupMembers":["Die Untrinkbaren","Hopfen & Malz","Die Bierkönige"]},{"team":"Shot Stars","groupIdx":1,"groupMembers":["Triple Threat","Schaumkronen FC","Shot Stars"]}];
+  var RESULTS = [{"team":"Die Bouncer","groupIdx":0,"groupMembers":["Die Bouncer","Prost Pals","Hopfen & Malz","Die Bierkönige","Triple Threat","Shot Stars"]},{"team":"Schaumkronen FC","groupIdx":1,"groupMembers":["Schaumkronen FC","Die Untrinkbaren","Nass & Spaß","Schaum Alarm","Golden Cups","Biber am Ball"]},{"team":"Prost Pals","groupIdx":0,"groupMembers":["Die Bouncer","Prost Pals","Hopfen & Malz","Die Bierkönige","Triple Threat","Shot Stars"]},{"team":"Die Untrinkbaren","groupIdx":1,"groupMembers":["Schaumkronen FC","Die Untrinkbaren","Nass & Spaß","Schaum Alarm","Golden Cups","Biber am Ball"]},{"team":"Hopfen & Malz","groupIdx":0,"groupMembers":["Die Bouncer","Prost Pals","Hopfen & Malz","Die Bierkönige","Triple Threat","Shot Stars"]},{"team":"Nass & Spaß","groupIdx":1,"groupMembers":["Schaumkronen FC","Die Untrinkbaren","Nass & Spaß","Schaum Alarm","Golden Cups","Biber am Ball"]},{"team":"Die Bierkönige","groupIdx":0,"groupMembers":["Die Bouncer","Prost Pals","Hopfen & Malz","Die Bierkönige","Triple Threat","Shot Stars"]},{"team":"Schaum Alarm","groupIdx":1,"groupMembers":["Schaumkronen FC","Die Untrinkbaren","Nass & Spaß","Schaum Alarm","Golden Cups","Biber am Ball"]},{"team":"Triple Threat","groupIdx":0,"groupMembers":["Die Bouncer","Prost Pals","Hopfen & Malz","Die Bierkönige","Triple Threat","Shot Stars"]},{"team":"Golden Cups","groupIdx":1,"groupMembers":["Schaumkronen FC","Die Untrinkbaren","Nass & Spaß","Schaum Alarm","Golden Cups","Biber am Ball"]},{"team":"Shot Stars","groupIdx":0,"groupMembers":["Die Bouncer","Prost Pals","Hopfen & Malz","Die Bierkönige","Triple Threat","Shot Stars"]},{"team":"Biber am Ball","groupIdx":1,"groupMembers":["Schaumkronen FC","Die Untrinkbaren","Nass & Spaß","Schaum Alarm","Golden Cups","Biber am Ball"]}];
   var GNAMES  = ["Gruppe A","Gruppe B"];
   var COLORS  = ["#ff7070","#7aaaff","#70ff70","#ffd070"];
   var BG      = ["rgba(255,80,80,0.15)","rgba(80,140,255,0.15)","rgba(80,220,80,0.15)","rgba(255,190,60,0.15)"];
@@ -350,7 +350,7 @@ body::before{
     var name = sel.value; if(!name) return;
     currentEntry = RESULTS.find(function(r){ return r.team === name; });
     if(!currentEntry) return;
-    coinInserted=false;
+    coinInserted=true;
     var csw=document.getElementById('coinSlotWrap');
     if(csw){csw.classList.remove('coin-inserted');csw.classList.add('coin-ready');}
     var cl=document.getElementById('coinLabel');if(cl){cl.textContent='🪙 INSERT COIN';}
@@ -566,7 +566,7 @@ body::before{
     document.getElementById('resultArea').style.display    = 'none';
     document.getElementById('machineScreen').style.display = 'none';
     document.getElementById('selectorBox').style.display   = 'flex';
-    coinInserted=false;
+    coinInserted=true;
     var csw2=document.getElementById('coinSlotWrap');if(csw2){csw2.classList.remove('coin-ready','coin-inserted');}
     var cl2=document.getElementById('coinLabel');if(cl2){cl2.textContent='🪙 INSERT COIN';}
     var td2=document.getElementById('teamDisplay');if(td2){td2.style.display='none';}
