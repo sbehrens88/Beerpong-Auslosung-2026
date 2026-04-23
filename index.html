@@ -70,7 +70,7 @@ body::before{
 }
 
 /* Cabinet */
-.cabinet-wrap{position:relative;display:inline-block;padding-right:52px;}
+.cabinet-wrap{display:flex;flex-direction:row;align-items:flex-start;justify-content:center;}
 .cabinet{
   position:relative;
   width:min(76vw,300px);
@@ -142,14 +142,13 @@ body::before{
 
 /* ===== LEVER ===== */
 .lever-outer{
-  position:absolute;
-  right:-44px;
-  top:16px;
-  width:40px;
+  width:44px;
   display:flex;flex-direction:column;align-items:center;
   cursor:pointer;
   z-index:10;
   touch-action:none;
+  padding-top:16px;
+  flex-shrink:0;
 }
 .lever-hint{
   font-size:.58rem;letter-spacing:2px;color:rgba(255,180,0,0.65);
@@ -186,7 +185,7 @@ body::before{
   position:absolute;
   top:-14px;
   left:50%;transform:translateX(-50%);
-  transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+  transition:none;
 }
 .lever-base{
   width:30px;height:18px;
@@ -198,7 +197,7 @@ body::before{
 }
 /* pulled state */
 .lever-outer.pulled .lever-rod{transform:rotate(-20deg);}
-.lever-outer.pulled .lever-ball{top:120px;box-shadow:0 0 8px rgba(255,80,0,0.3);}
+.lever-outer.pulled .lever-ball{box-shadow:0 0 6px rgba(255,80,0,0.3);}
 .lever-outer.pulled .lever-hint{display:none;}
 .lever-outer.locked{cursor:default;}
 
@@ -231,7 +230,7 @@ body::before{
 .fw-c{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden;}
 .fw{position:absolute;border-radius:50%;animation:fwE 1s ease-out forwards;}
 @keyframes fwE{0%{opacity:1;transform:translate(0,0);}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0);}}
-@media(max-width:520px){.sm-lever{right:-46px!important;width:52px!important;}.lever-knob{width:42px!important;height:42px!important;top:-21px!important;box-shadow:0 0 30px rgba(255,215,0,1),0 0 55px rgba(255,140,0,.7),inset 0 2px 3px rgba(255,255,255,.4)!important;}.lever-rod{width:15px!important;box-shadow:0 0 22px rgba(255,215,0,.9)!important;}.lever-hint{font-size:.8rem!important;font-weight:800!important;color:#ffd700!important;}}
+@media(max-width:520px){.lever-hint{font-size:.7rem!important;font-weight:800!important;color:#ffd700!important;}}.lever-knob{width:42px!important;height:42px!important;top:-21px!important;box-shadow:0 0 30px rgba(255,215,0,1),0 0 55px rgba(255,140,0,.7),inset 0 2px 3px rgba(255,255,255,.4)!important;}.lever-rod{width:15px!important;box-shadow:0 0 22px rgba(255,215,0,.9)!important;}.lever-hint{font-size:.8rem!important;font-weight:800!important;color:#ffd700!important;}}
 .other-groups-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:50px;color:rgba(255,255,255,.6);font-size:.8rem;font-weight:700;letter-spacing:2px;padding:10px 24px;cursor:pointer;text-transform:uppercase;transition:all .25s;}
 .other-groups-btn:hover{background:rgba(255,255,255,.12);color:#fff;}
 .other-groups-panel{display:none;width:100%;border-radius:14px;overflow:hidden;border:1px solid rgba(255,215,0,.2);margin-top:4px;}
@@ -284,8 +283,9 @@ body::before{
       <div class="lever-outer" id="leverWrap" onclick="pullLever()">
         <div class="lever-hint" id="leverHint">ZIEHEN</div>
         <div class="lever-rod-wrap">
-          <div class="lever-rod" id="leverRod"></div>
-          <div class="lever-ball" id="leverBall"></div>
+          <div class="lever-rod" id="leverRod">
+            <div class="lever-ball" id="leverBall"></div>
+          </div>
         </div>
         <div class="lever-base"></div>
       </div>
@@ -321,8 +321,8 @@ body::before{
 
 <script>
 (function(){
-  var RESULTS = [{"team":"Die Bierkönige","groupIdx":0,"groupMembers":["Die Bierkönige","Schaumkronen FC","Shot Stars","Prost Pals","Nass & Spaß"]},{"team":"Hopfen & Malz","groupIdx":1,"groupMembers":["Hopfen & Malz","Die Untrinkbaren","Golden Cups","Triple Threat","Schaum Alarm"]},{"team":"Schaumkronen FC","groupIdx":0,"groupMembers":["Die Bierkönige","Schaumkronen FC","Shot Stars","Prost Pals","Nass & Spaß"]},{"team":"Die Untrinkbaren","groupIdx":1,"groupMembers":["Hopfen & Malz","Die Untrinkbaren","Golden Cups","Triple Threat","Schaum Alarm"]},{"team":"Shot Stars","groupIdx":0,"groupMembers":["Die Bierkönige","Schaumkronen FC","Shot Stars","Prost Pals","Nass & Spaß"]},{"team":"Golden Cups","groupIdx":1,"groupMembers":["Hopfen & Malz","Die Untrinkbaren","Golden Cups","Triple Threat","Schaum Alarm"]},{"team":"Prost Pals","groupIdx":0,"groupMembers":["Die Bierkönige","Schaumkronen FC","Shot Stars","Prost Pals","Nass & Spaß"]},{"team":"Triple Threat","groupIdx":1,"groupMembers":["Hopfen & Malz","Die Untrinkbaren","Golden Cups","Triple Threat","Schaum Alarm"]},{"team":"Nass & Spaß","groupIdx":0,"groupMembers":["Die Bierkönige","Schaumkronen FC","Shot Stars","Prost Pals","Nass & Spaß"]},{"team":"Schaum Alarm","groupIdx":1,"groupMembers":["Hopfen & Malz","Die Untrinkbaren","Golden Cups","Triple Threat","Schaum Alarm"]}];
-  var GNAMES  = ["Gruppe A","Gruppe B"];
+  var RESULTS = [{"team":"Die Bierkönige","groupIdx":0,"groupMembers":["Die Bierkönige","Nass & Spaß"]},{"team":"Die Untrinkbaren","groupIdx":1,"groupMembers":["Die Untrinkbaren","Schaum Alarm"]},{"team":"Triple Threat","groupIdx":2,"groupMembers":["Triple Threat","Hopfen & Malz"]},{"team":"Schaumkronen FC","groupIdx":3,"groupMembers":["Schaumkronen FC","Shot Stars"]},{"team":"Nass & Spaß","groupIdx":0,"groupMembers":["Die Bierkönige","Nass & Spaß"]},{"team":"Schaum Alarm","groupIdx":1,"groupMembers":["Die Untrinkbaren","Schaum Alarm"]},{"team":"Hopfen & Malz","groupIdx":2,"groupMembers":["Triple Threat","Hopfen & Malz"]},{"team":"Shot Stars","groupIdx":3,"groupMembers":["Schaumkronen FC","Shot Stars"]}];
+  var GNAMES  = ["Gruppe A","Gruppe B","Gruppe C","Gruppe D"];
   var COLORS  = ["#ff7070","#7aaaff","#70ff70","#ffd070"];
   var BG      = ["rgba(255,80,80,0.15)","rgba(80,140,255,0.15)","rgba(80,220,80,0.15)","rgba(255,190,60,0.15)"];
   var ITEM_H  = 140;
