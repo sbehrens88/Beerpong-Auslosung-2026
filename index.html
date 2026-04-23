@@ -10,7 +10,7 @@ html,body{height:100%;}
 body{
   background:#0a0a0f;font-family:Arial,sans-serif;color:#fff;
   display:flex;flex-direction:column;align-items:center;
-  min-height:100vh;overflow-y:auto;
+  min-height:100vh;overflow-y:auto;overflow-x:hidden;
   user-select:none;-webkit-tap-highlight-color:transparent;
 }
 body::before{
@@ -21,7 +21,7 @@ body::before{
 .wrap{
   position:relative;z-index:1;
   display:flex;flex-direction:column;align-items:center;
-  gap:22px;padding:28px 20px 60px;width:100%;max-width:460px;text-align:center;
+  gap:22px;padding:28px 20px 60px;width:100%;max-width:460px;text-align:center;overflow:visible;
 }
 .logo{font-size:.75rem;letter-spacing:4px;color:rgba(255,215,0,0.4);text-transform:uppercase;}
 .page-title{
@@ -62,7 +62,7 @@ body::before{
 .go-btn:not(:disabled):active{transform:scale(0.97)!important;}
 
 /* ===== SLOT MACHINE SCREEN ===== */
-.machine-screen{display:none;flex-direction:column;align-items:center;gap:18px;width:100%;}
+.machine-screen{display:none;flex-direction:column;align-items:center;gap:18px;width:100%;overflow:visible;}
 
 .spin-status{
   font-size:.85rem;font-weight:700;letter-spacing:2px;
@@ -70,7 +70,7 @@ body::before{
 }
 
 /* Cabinet */
-.cabinet-wrap{position:relative;display:inline-block;}
+.cabinet-wrap{position:relative;display:inline-block;padding-right:52px;}
 .cabinet{
   position:relative;
   width:min(76vw,300px);
@@ -198,7 +198,7 @@ body::before{
 }
 /* pulled state */
 .lever-outer.pulled .lever-rod{transform:rotate(-20deg);}
-.lever-outer.pulled .lever-ball{box-shadow:0 0 8px rgba(255,80,0,0.3);}
+.lever-outer.pulled .lever-ball{top:120px;box-shadow:0 0 8px rgba(255,80,0,0.3);}
 .lever-outer.pulled .lever-hint{display:none;}
 .lever-outer.locked{cursor:default;}
 
@@ -223,8 +223,7 @@ body::before{
 .congrats{font-size:.95rem;font-weight:600;color:rgba(255,255,255,0.55);line-height:1.8;}
 .mates-box{width:100%;border-radius:16px;padding:20px;background:rgba(255,255,255,0.03);}
 .mates-title{font-size:.65rem;letter-spacing:3px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.07);text-align:center;}
-.mate-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;margin-bottom:7px;font-size:.9rem;font-weight:700;opacity:0;transform:translateX(-20px);transition:opacity 0.4s ease,transform 0.4s ease;}
-.mate-row.visible{opacity:1;transform:translateX(0);}
+.mate-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;margin-bottom:7px;font-size:.9rem;font-weight:700;}
 .beers{display:flex;gap:10px;font-size:1.8rem;justify-content:center;animation:wave 1.2s ease-in-out infinite;}
 @keyframes wave{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
 .reset-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:50px;color:rgba(255,255,255,0.5);font-size:.8rem;font-weight:700;letter-spacing:2px;padding:12px 28px;cursor:pointer;text-transform:uppercase;transition:all .25s;}
@@ -285,9 +284,8 @@ body::before{
       <div class="lever-outer" id="leverWrap" onclick="pullLever()">
         <div class="lever-hint" id="leverHint">ZIEHEN</div>
         <div class="lever-rod-wrap">
-          <div class="lever-rod" id="leverRod">
-            <div class="lever-ball" id="leverBall"></div>
-          </div>
+          <div class="lever-rod" id="leverRod"></div>
+          <div class="lever-ball" id="leverBall"></div>
         </div>
         <div class="lever-base"></div>
       </div>
@@ -323,7 +321,7 @@ body::before{
 
 <script>
 (function(){
-  var RESULTS = [{"team":"Die Bouncer","groupIdx":0,"groupMembers":["Die Bouncer","Nass & Spaß","Golden Cups","Die Bierkönige","Biber am Ball","Shot Stars"]},{"team":"Triple Threat","groupIdx":1,"groupMembers":["Triple Threat","Prost Pals","Hopfen & Malz","Schaum Alarm","Schaumkronen FC","Die Untrinkbaren"]},{"team":"Nass & Spaß","groupIdx":0,"groupMembers":["Die Bouncer","Nass & Spaß","Golden Cups","Die Bierkönige","Biber am Ball","Shot Stars"]},{"team":"Prost Pals","groupIdx":1,"groupMembers":["Triple Threat","Prost Pals","Hopfen & Malz","Schaum Alarm","Schaumkronen FC","Die Untrinkbaren"]},{"team":"Golden Cups","groupIdx":0,"groupMembers":["Die Bouncer","Nass & Spaß","Golden Cups","Die Bierkönige","Biber am Ball","Shot Stars"]},{"team":"Hopfen & Malz","groupIdx":1,"groupMembers":["Triple Threat","Prost Pals","Hopfen & Malz","Schaum Alarm","Schaumkronen FC","Die Untrinkbaren"]},{"team":"Die Bierkönige","groupIdx":0,"groupMembers":["Die Bouncer","Nass & Spaß","Golden Cups","Die Bierkönige","Biber am Ball","Shot Stars"]},{"team":"Schaum Alarm","groupIdx":1,"groupMembers":["Triple Threat","Prost Pals","Hopfen & Malz","Schaum Alarm","Schaumkronen FC","Die Untrinkbaren"]},{"team":"Biber am Ball","groupIdx":0,"groupMembers":["Die Bouncer","Nass & Spaß","Golden Cups","Die Bierkönige","Biber am Ball","Shot Stars"]},{"team":"Schaumkronen FC","groupIdx":1,"groupMembers":["Triple Threat","Prost Pals","Hopfen & Malz","Schaum Alarm","Schaumkronen FC","Die Untrinkbaren"]},{"team":"Shot Stars","groupIdx":0,"groupMembers":["Die Bouncer","Nass & Spaß","Golden Cups","Die Bierkönige","Biber am Ball","Shot Stars"]},{"team":"Die Untrinkbaren","groupIdx":1,"groupMembers":["Triple Threat","Prost Pals","Hopfen & Malz","Schaum Alarm","Schaumkronen FC","Die Untrinkbaren"]}];
+  var RESULTS = [{"team":"Die Bierkönige","groupIdx":0,"groupMembers":["Die Bierkönige","Schaumkronen FC","Shot Stars","Prost Pals","Nass & Spaß"]},{"team":"Hopfen & Malz","groupIdx":1,"groupMembers":["Hopfen & Malz","Die Untrinkbaren","Golden Cups","Triple Threat","Schaum Alarm"]},{"team":"Schaumkronen FC","groupIdx":0,"groupMembers":["Die Bierkönige","Schaumkronen FC","Shot Stars","Prost Pals","Nass & Spaß"]},{"team":"Die Untrinkbaren","groupIdx":1,"groupMembers":["Hopfen & Malz","Die Untrinkbaren","Golden Cups","Triple Threat","Schaum Alarm"]},{"team":"Shot Stars","groupIdx":0,"groupMembers":["Die Bierkönige","Schaumkronen FC","Shot Stars","Prost Pals","Nass & Spaß"]},{"team":"Golden Cups","groupIdx":1,"groupMembers":["Hopfen & Malz","Die Untrinkbaren","Golden Cups","Triple Threat","Schaum Alarm"]},{"team":"Prost Pals","groupIdx":0,"groupMembers":["Die Bierkönige","Schaumkronen FC","Shot Stars","Prost Pals","Nass & Spaß"]},{"team":"Triple Threat","groupIdx":1,"groupMembers":["Hopfen & Malz","Die Untrinkbaren","Golden Cups","Triple Threat","Schaum Alarm"]},{"team":"Nass & Spaß","groupIdx":0,"groupMembers":["Die Bierkönige","Schaumkronen FC","Shot Stars","Prost Pals","Nass & Spaß"]},{"team":"Schaum Alarm","groupIdx":1,"groupMembers":["Hopfen & Malz","Die Untrinkbaren","Golden Cups","Triple Threat","Schaum Alarm"]}];
   var GNAMES  = ["Gruppe A","Gruppe B"];
   var COLORS  = ["#ff7070","#7aaaff","#70ff70","#ffd070"];
   var BG      = ["rgba(255,80,80,0.15)","rgba(80,140,255,0.15)","rgba(80,220,80,0.15)","rgba(255,190,60,0.15)"];
@@ -350,7 +348,7 @@ body::before{
     var name = sel.value; if(!name) return;
     currentEntry = RESULTS.find(function(r){ return r.team === name; });
     if(!currentEntry) return;
-    coinInserted=true;
+    coinInserted=false;
     var csw=document.getElementById('coinSlotWrap');
     if(csw){csw.classList.remove('coin-inserted');csw.classList.add('coin-ready');}
     var cl=document.getElementById('coinLabel');if(cl){cl.textContent='🪙 INSERT COIN';}
@@ -409,7 +407,7 @@ body::before{
   }
 
   window.pullLever = function(){
-    if(leverPulled || !currentEntry) return;
+    if(leverPulled || !currentEntry || !coinInserted) return;
     leverPulled = true;
     document.getElementById('leverWrap').classList.add('pulled','locked');
     document.getElementById('spinStatus').textContent = '🎰 Dreht sich...';
@@ -544,8 +542,7 @@ body::before{
         var ml=document.getElementById('matesList');
         mb.style.border='1px solid '+gColor+'44';
         var allInGroup=RESULTS.filter(function(r){return r.groupIdx===gIdx;}).map(function(r){return r.team;});
-        var teamList=allInGroup.length?allInGroup:mates;
-        teamList.forEach(function(name,i){
+        (allInGroup.length?allInGroup:mates).forEach(function(name){
           var row=document.createElement('div'); row.className='mate-row';
           row.style.background=gBg;
           row.style.border='1px solid '+gColor+'33';
@@ -553,7 +550,6 @@ body::before{
           var tag=name===teamName?' <span style="font-size:.7rem;opacity:.55;">(du)</span>':'';
           row.innerHTML='<span>'+icon+'</span>'+name+tag;
           ml.appendChild(row);
-          setTimeout(function(){row.classList.add('visible');}, i*2000);
         });
         // other groups
         var panel=document.getElementById('otherGroupsPanel');
@@ -563,20 +559,12 @@ body::before{
     }, 900);
   }
 
-  window.toggleOtherGroups = function(btn) {
-    var panel = document.getElementById('otherGroupsPanel');
-    if (!panel) return;
-    var visible = panel.style.display === 'block';
-    panel.style.display = visible ? 'none' : 'block';
-    btn.textContent = visible ? '👁 Andere Gruppen anzeigen' : '🙈 Andere Gruppen verbergen';
-  };
-
   window.resetPage = function(){
     leverPulled = false; currentEntry = null;
     document.getElementById('resultArea').style.display    = 'none';
     document.getElementById('machineScreen').style.display = 'none';
     document.getElementById('selectorBox').style.display   = 'flex';
-    coinInserted=true;
+    coinInserted=false;
     var csw2=document.getElementById('coinSlotWrap');if(csw2){csw2.classList.remove('coin-ready','coin-inserted');}
     var cl2=document.getElementById('coinLabel');if(cl2){cl2.textContent='🪙 INSERT COIN';}
     var td2=document.getElementById('teamDisplay');if(td2){td2.style.display='none';}
