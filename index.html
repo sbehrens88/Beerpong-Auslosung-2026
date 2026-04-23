@@ -73,7 +73,7 @@ body::before{
 .cabinet-wrap{display:flex;flex-direction:row;align-items:flex-start;justify-content:center;}
 .cabinet{
   position:relative;
-  width:min(76vw,300px);
+  width:min(calc(100vw - 110px),300px);
   background:linear-gradient(160deg,#2c1d06,#1a1000,#0f0800);
   border:3px solid #8b6914;
   border-radius:22px 22px 16px 16px;
@@ -147,8 +147,9 @@ body::before{
   cursor:pointer;
   z-index:10;
   touch-action:none;
-  padding-top:16px;
+  padding-top:30px;
   flex-shrink:0;
+  overflow:visible;
 }
 .lever-hint{
   font-size:.58rem;letter-spacing:2px;color:rgba(255,180,0,0.65);
@@ -164,6 +165,7 @@ body::before{
   width:10px;
   height:160px;
   display:flex;align-items:flex-end;justify-content:center;
+  overflow:visible;
 }
 .lever-rod{
   width:8px;
@@ -321,8 +323,8 @@ body::before{
 
 <script>
 (function(){
-  var RESULTS = [{"team":"Die Bierkönige","groupIdx":0,"groupMembers":["Die Bierkönige","Nass & Spaß"]},{"team":"Die Untrinkbaren","groupIdx":1,"groupMembers":["Die Untrinkbaren","Schaum Alarm"]},{"team":"Triple Threat","groupIdx":2,"groupMembers":["Triple Threat","Hopfen & Malz"]},{"team":"Schaumkronen FC","groupIdx":3,"groupMembers":["Schaumkronen FC","Shot Stars"]},{"team":"Nass & Spaß","groupIdx":0,"groupMembers":["Die Bierkönige","Nass & Spaß"]},{"team":"Schaum Alarm","groupIdx":1,"groupMembers":["Die Untrinkbaren","Schaum Alarm"]},{"team":"Hopfen & Malz","groupIdx":2,"groupMembers":["Triple Threat","Hopfen & Malz"]},{"team":"Shot Stars","groupIdx":3,"groupMembers":["Schaumkronen FC","Shot Stars"]}];
-  var GNAMES  = ["Gruppe A","Gruppe B","Gruppe C","Gruppe D"];
+  var RESULTS = [{"team":"Die Untrinkbaren","groupIdx":0,"groupMembers":["Die Untrinkbaren","Hopfen & Malz","Die Bierkönige"]},{"team":"Triple Threat","groupIdx":1,"groupMembers":["Triple Threat","Schaumkronen FC","Shot Stars"]},{"team":"Hopfen & Malz","groupIdx":0,"groupMembers":["Die Untrinkbaren","Hopfen & Malz","Die Bierkönige"]},{"team":"Schaumkronen FC","groupIdx":1,"groupMembers":["Triple Threat","Schaumkronen FC","Shot Stars"]},{"team":"Die Bierkönige","groupIdx":0,"groupMembers":["Die Untrinkbaren","Hopfen & Malz","Die Bierkönige"]},{"team":"Shot Stars","groupIdx":1,"groupMembers":["Triple Threat","Schaumkronen FC","Shot Stars"]}];
+  var GNAMES  = ["Gruppe A","Gruppe B"];
   var COLORS  = ["#ff7070","#7aaaff","#70ff70","#ffd070"];
   var BG      = ["rgba(255,80,80,0.15)","rgba(80,140,255,0.15)","rgba(80,220,80,0.15)","rgba(255,190,60,0.15)"];
   var ITEM_H  = 140;
