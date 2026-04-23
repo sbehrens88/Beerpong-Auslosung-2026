@@ -141,67 +141,15 @@ body::before{
 @keyframes lblink{0%,100%{opacity:1;}50%{opacity:.2;}}
 
 /* ===== LEVER ===== */
-.lever-outer{
-  width:44px;
-  display:flex;flex-direction:column;align-items:center;
-  cursor:pointer;
-  z-index:10;
-  touch-action:none;
-  padding-top:30px;
-  flex-shrink:0;
-  overflow:visible;
-}
-.lever-hint{
-  font-size:.58rem;letter-spacing:2px;color:rgba(255,180,0,0.65);
-  text-transform:uppercase;
-  writing-mode:vertical-lr;text-orientation:mixed;
-  transform:rotate(180deg);
-  height:60px;margin-bottom:4px;
-  animation:hblink 1.4s ease-in-out infinite;
-}
-@keyframes hblink{0%,100%{opacity:.35;}50%{opacity:1;}}
-.lever-rod-wrap{
-  position:relative;
-  width:10px;
-  height:160px;
-  display:flex;align-items:flex-end;justify-content:center;
-  overflow:visible;
-}
-.lever-rod{
-  width:8px;
-  height:150px;
-  background:linear-gradient(90deg,#a07820,#ffd700,#c89030,#ffd700,#a07820);
-  border-radius:4px;
-  position:absolute;
-  bottom:0;
-  transform-origin:bottom center;
-  transform:rotate(20deg);
-  transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);
-  box-shadow:2px 0 8px rgba(0,0,0,0.6);
-}
-.lever-ball{
-  width:28px;height:28px;border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,#ff8844,#cc1100);
-  border:2px solid #ff4422;
-  box-shadow:0 0 16px rgba(255,80,0,0.8),inset 0 2px 5px rgba(255,255,255,0.35);
-  position:absolute;
-  top:-14px;
-  left:50%;transform:translateX(-50%);
-  transition:none;
-}
-.lever-base{
-  width:30px;height:18px;
-  background:linear-gradient(180deg,#5a4010,#3a2800);
-  border:2px solid #8b6914;
-  border-radius:5px;
-  margin-top:2px;
-  box-shadow:0 0 8px rgba(255,180,0,0.15);
-}
+
+
+50%{opacity:1;}}
+
+
+
+
 /* pulled state */
-.lever-outer.pulled .lever-rod{transform:rotate(-20deg);}
-.lever-outer.pulled .lever-ball{box-shadow:0 0 6px rgba(255,80,0,0.3);}
-.lever-outer.pulled .lever-hint{display:none;}
-.lever-outer.locked{cursor:default;}
+
 
 /* countdown */
 .countdown-wrap{display:none;flex-direction:column;align-items:center;gap:4px;}
@@ -232,7 +180,7 @@ body::before{
 .fw-c{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden;}
 .fw{position:absolute;border-radius:50%;animation:fwE 1s ease-out forwards;}
 @keyframes fwE{0%{opacity:1;transform:translate(0,0);}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0);}}
-@media(max-width:520px){.lever-hint{font-size:.7rem!important;font-weight:800!important;color:#ffd700!important;}}.lever-knob{width:42px!important;height:42px!important;top:-21px!important;box-shadow:0 0 30px rgba(255,215,0,1),0 0 55px rgba(255,140,0,.7),inset 0 2px 3px rgba(255,255,255,.4)!important;}.lever-rod{width:15px!important;box-shadow:0 0 22px rgba(255,215,0,.9)!important;}.lever-hint{font-size:.8rem!important;font-weight:800!important;color:#ffd700!important;}}
+@media(max-width:520px){}.lever-knob{width:42px!important;height:42px!important;top:-21px!important;box-shadow:0 0 30px rgba(255,215,0,1),0 0 55px rgba(255,140,0,.7),inset 0 2px 3px rgba(255,255,255,.4)!important;}}
 .other-groups-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:50px;color:rgba(255,255,255,.6);font-size:.8rem;font-weight:700;letter-spacing:2px;padding:10px 24px;cursor:pointer;text-transform:uppercase;transition:all .25s;}
 .other-groups-btn:hover{background:rgba(255,255,255,.12);color:#fff;}
 .other-groups-panel{display:none;width:100%;border-radius:14px;overflow:hidden;border:1px solid rgba(255,215,0,.2);margin-top:4px;}
@@ -282,16 +230,46 @@ body::before{
           <div class="dlight"></div><div class="dlight"></div>
         </div>
       </div>
-      <div class="lever-outer" id="leverWrap" onclick="pullLever()">
-        <div class="lever-hint" id="leverHint">ZIEHEN</div>
-        <div class="lever-rod-wrap">
-          <div class="lever-rod" id="leverRod">
-            <div class="lever-ball" id="leverBall"></div>
-          </div>
-        </div>
-        <div class="lever-base"></div>
+      <div class="lever-scene" id="leverWrap">
+        <svg id="leverSVG" width="60" height="210" viewBox="0 0 60 210" overflow="visible">
+          <defs>
+            <linearGradient id="rodGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ffd700"/>
+              <stop offset="50%" stop-color="#e8a800"/>
+              <stop offset="100%" stop-color="#7a5c10"/>
+            </linearGradient>
+            <radialGradient id="ballGrad" cx="35%" cy="30%" r="65%">
+              <stop offset="0%" stop-color="#ff9966"/>
+              <stop offset="50%" stop-color="#dd2200"/>
+              <stop offset="100%" stop-color="#880000"/>
+            </radialGradient>
+            <filter id="ballGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="4" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- Sockel (fix, dreht sich nicht) -->
+          <rect x="18" y="185" width="24" height="16" rx="5"
+                fill="#3a2800" stroke="#b8861a" stroke-width="2"/>
+          <ellipse cx="30" cy="185" rx="10" ry="5" fill="#7a5c10" stroke="#ffd700" stroke-width="1.5"/>
+
+          <!-- Hebel-Gruppe: dreht sich um Drehpunkt (30,185) -->
+          <g id="leverGroup" transform="rotate(0, 30, 185)">
+            <!-- Stab -->
+            <rect x="25.5" y="45" width="9" height="140" rx="4"
+                  fill="url(#rodGrad)" stroke="#c8a820" stroke-width="0.5"/>
+            <!-- Ball -->
+            <circle cx="30" cy="36" r="16"
+                    fill="url(#ballGrad)" stroke="#ff4422" stroke-width="2.5"
+                    filter="url(#ballGlow)"/>
+            <!-- Glanzpunkt auf Ball -->
+            <ellipse cx="24" cy="30" rx="5" ry="4" fill="rgba(255,255,255,0.25)" transform="rotate(-20,24,30)"/>
+          </g>
+        </svg>
+        <div style="font-size:.6rem;letter-spacing:2px;color:rgba(255,180,0,0.8);text-transform:uppercase;text-align:center;margin-top:4px;animation:hblink3d 1.4s ease-in-out infinite;" id="leverHint">⬇ ZIEHEN</div>
       </div>
-    </div>
+      </div>
 
     <div class="countdown-wrap" id="countdownWrap">
       <div class="cring">
@@ -323,8 +301,8 @@ body::before{
 
 <script>
 (function(){
-  var RESULTS = [{"team":"Die Bouncer","groupIdx":0,"groupMembers":["Die Bouncer","Prost Pals","Hopfen & Malz","Die Bierkönige","Triple Threat","Shot Stars"]},{"team":"Schaumkronen FC","groupIdx":1,"groupMembers":["Schaumkronen FC","Die Untrinkbaren","Nass & Spaß","Schaum Alarm","Golden Cups","Biber am Ball"]},{"team":"Prost Pals","groupIdx":0,"groupMembers":["Die Bouncer","Prost Pals","Hopfen & Malz","Die Bierkönige","Triple Threat","Shot Stars"]},{"team":"Die Untrinkbaren","groupIdx":1,"groupMembers":["Schaumkronen FC","Die Untrinkbaren","Nass & Spaß","Schaum Alarm","Golden Cups","Biber am Ball"]},{"team":"Hopfen & Malz","groupIdx":0,"groupMembers":["Die Bouncer","Prost Pals","Hopfen & Malz","Die Bierkönige","Triple Threat","Shot Stars"]},{"team":"Nass & Spaß","groupIdx":1,"groupMembers":["Schaumkronen FC","Die Untrinkbaren","Nass & Spaß","Schaum Alarm","Golden Cups","Biber am Ball"]},{"team":"Die Bierkönige","groupIdx":0,"groupMembers":["Die Bouncer","Prost Pals","Hopfen & Malz","Die Bierkönige","Triple Threat","Shot Stars"]},{"team":"Schaum Alarm","groupIdx":1,"groupMembers":["Schaumkronen FC","Die Untrinkbaren","Nass & Spaß","Schaum Alarm","Golden Cups","Biber am Ball"]},{"team":"Triple Threat","groupIdx":0,"groupMembers":["Die Bouncer","Prost Pals","Hopfen & Malz","Die Bierkönige","Triple Threat","Shot Stars"]},{"team":"Golden Cups","groupIdx":1,"groupMembers":["Schaumkronen FC","Die Untrinkbaren","Nass & Spaß","Schaum Alarm","Golden Cups","Biber am Ball"]},{"team":"Shot Stars","groupIdx":0,"groupMembers":["Die Bouncer","Prost Pals","Hopfen & Malz","Die Bierkönige","Triple Threat","Shot Stars"]},{"team":"Biber am Ball","groupIdx":1,"groupMembers":["Schaumkronen FC","Die Untrinkbaren","Nass & Spaß","Schaum Alarm","Golden Cups","Biber am Ball"]}];
-  var GNAMES  = ["Gruppe A","Gruppe B"];
+  var RESULTS = [{"team":"Nass & Spaß","groupIdx":0,"groupMembers":["Nass & Spaß","Shot Stars"]},{"team":"Hopfen & Malz","groupIdx":1,"groupMembers":["Hopfen & Malz","Schaum Alarm"]},{"team":"Die Bierkönige","groupIdx":2,"groupMembers":["Die Bierkönige","Die Untrinkbaren"]},{"team":"Triple Threat","groupIdx":3,"groupMembers":["Triple Threat","Schaumkronen FC"]},{"team":"Shot Stars","groupIdx":0,"groupMembers":["Nass & Spaß","Shot Stars"]},{"team":"Schaum Alarm","groupIdx":1,"groupMembers":["Hopfen & Malz","Schaum Alarm"]},{"team":"Die Untrinkbaren","groupIdx":2,"groupMembers":["Die Bierkönige","Die Untrinkbaren"]},{"team":"Schaumkronen FC","groupIdx":3,"groupMembers":["Triple Threat","Schaumkronen FC"]}];
+  var GNAMES  = ["Gruppe A","Gruppe B","Gruppe C","Gruppe D"];
   var COLORS  = ["#ff7070","#7aaaff","#70ff70","#ffd070"];
   var BG      = ["rgba(255,80,80,0.15)","rgba(80,140,255,0.15)","rgba(80,220,80,0.15)","rgba(255,190,60,0.15)"];
   var ITEM_H  = 140;
@@ -408,10 +386,86 @@ body::before{
     window._reelTotal = items.length;
   }
 
+  // ===== HEBEL SVG ROTATE =====
+  (function(){
+    var scene   = document.getElementById('leverWrap');
+    var group   = document.getElementById('leverGroup');
+    var hint    = document.getElementById('leverHint');
+    var startY  = null;
+    var dragging= false;
+    var PIVOT   = '30,185';
+    var MAX_DEG = 160;
+    var TRIGGER = 80;
+    var TRAVEL  = 140;
+    var curDeg  = 0;
+
+    function getY(e){
+      if(e.touches && e.touches.length)               return e.touches[0].clientY;
+      if(e.changedTouches && e.changedTouches.length) return e.changedTouches[0].clientY;
+      return e.clientY;
+    }
+
+    function setDeg(deg){
+      curDeg = Math.min(Math.max(deg, 0), MAX_DEG);
+      if(group) group.setAttribute('transform', 'rotate('+curDeg+', '+PIVOT+')');
+    }
+
+    setDeg(0);
+
+    function onStart(e){
+      if(leverPulled) return;
+      startY   = getY(e);
+      dragging = true;
+      if(hint) hint.style.opacity='0';
+      e.preventDefault(); e.stopPropagation();
+    }
+    function onMove(e){
+      if(!dragging) return;
+      e.preventDefault();
+      var dy = Math.min(Math.max(getY(e) - startY, 0), TRAVEL);
+      setDeg((dy / TRAVEL) * MAX_DEG);
+    }
+    function onEnd(e){
+      if(!dragging) return;
+      dragging = false;
+      var dy = Math.min(Math.max(getY(e) - (startY||0), 0), TRAVEL);
+      startY  = null;
+      if(dy >= TRIGGER){
+        // Animate to end
+        var from = curDeg;
+        var steps = 12;
+        var i = 0;
+        var anim = setInterval(function(){
+          i++;
+          setDeg(from + (MAX_DEG - from) * (i / steps));
+          if(i >= steps){ clearInterval(anim); pullLever(); }
+        }, 18);
+      } else {
+        // Snap back
+        var from2 = curDeg;
+        var steps2 = 10;
+        var j = 0;
+        var anim2 = setInterval(function(){
+          j++;
+          setDeg(from2 * (1 - j / steps2));
+          if(j >= steps2){ clearInterval(anim2); setDeg(0); }
+        }, 20);
+        if(hint) hint.style.opacity='1';
+      }
+    }
+
+    scene.addEventListener('mousedown',  onStart, {passive:false});
+    scene.addEventListener('touchstart', onStart, {passive:false});
+    window.addEventListener('mousemove', onMove,  {passive:false});
+    window.addEventListener('touchmove', onMove,  {passive:false});
+    window.addEventListener('mouseup',   onEnd);
+    window.addEventListener('touchend',  onEnd);
+  })();
+
   window.pullLever = function(){
     if(leverPulled || !currentEntry || !coinInserted) return;
     leverPulled = true;
-    document.getElementById('leverWrap').classList.add('pulled','locked');
+    document.getElementById('leverWrap').classList.add('locked');
     document.getElementById('spinStatus').textContent = '🎰 Dreht sich...';
     document.getElementById('countdownWrap').style.display = 'flex';
     setTimeout(function(){ runSpin(currentEntry); }, 450);
@@ -562,7 +616,7 @@ body::before{
   }
 
   window.resetPage = function(){
-    leverPulled = false; currentEntry = null;
+    leverPulled = false; currentEntry = null; var lg=document.getElementById('leverGroup'); if(lg){lg.setAttribute('transform','rotate(0,30,185)');} var lh=document.getElementById('leverHint');if(lh){lh.style.opacity='1';} document.getElementById('leverWrap').classList.remove('locked');
     document.getElementById('resultArea').style.display    = 'none';
     document.getElementById('machineScreen').style.display = 'none';
     document.getElementById('selectorBox').style.display   = 'flex';
