@@ -2,452 +2,673 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>🏓 Beerpong – Gruppenauslosung</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏓 Beerpong Auslosung</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{min-height:100%;overflow-x:hidden;}
-body{
-  background:radial-gradient(ellipse at 50% 0%,#1a0a00 0%,#0a0005 60%,#000 100%);
-  font-family:Arial,sans-serif;color:#fff;
-  display:flex;flex-direction:column;align-items:center;
-  padding:24px 12px 60px;
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#0a0a0f; color:#fff; font-family:Arial,sans-serif; min-height:100vh; }
+.screen { position:relative; z-index:1; }
+#setupScreen {
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:24px; padding:32px 16px;
 }
-.page-header{text-align:center;margin-bottom:20px;}
-.page-logo{font-size:.75rem;letter-spacing:5px;color:rgba(255,215,0,0.35);text-transform:uppercase;margin-bottom:8px;}
-.page-title{
-  font-size:clamp(1.6rem,7vw,2.6rem);font-weight:900;letter-spacing:3px;
+.main-title {
+  font-size:clamp(2rem,6vw,3.5rem); font-weight:900;
   background:linear-gradient(135deg,#ffd700,#ff8c00,#ff4500);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  animation:titlePulse 3s ease-in-out infinite;
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  letter-spacing:3px; text-align:center; animation:pulse 3s ease-in-out infinite;
 }
-@keyframes titlePulse{0%,100%{filter:brightness(1);}50%{filter:brightness(1.5);}}
-.team-selector{
-  width:100%;max-width:320px;
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(255,215,0,0.2);
-  border-radius:16px;padding:16px;
-  display:flex;flex-direction:column;gap:10px;
-  margin-bottom:20px;text-align:center;
+@keyframes pulse { 0%,100%{filter:brightness(1);} 50%{filter:brightness(1.4);} }
+.subtitle { font-size:1rem; color:rgba(255,255,255,0.4); letter-spacing:4px; text-align:center; }
+.card {
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,215,0,0.25);
+  border-radius:20px; padding:28px; width:100%; max-width:760px;
 }
-.sel-label{font-size:.7rem;letter-spacing:3px;color:rgba(255,215,0,0.5);text-transform:uppercase;}
-.team-select{
-  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.2);
-  border-radius:10px;color:#fff;padding:12px 14px;
-  font-size:1rem;font-weight:700;cursor:pointer;outline:none;width:100%;
+.card-title {
+  font-size:0.75rem; letter-spacing:3px; color:rgba(255,255,255,0.35);
+  text-transform:uppercase; margin-bottom:16px;
+  padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.07);
 }
-.team-select option{background:#1a1a2e;}
-/* ===== FULL SLOT MACHINE ===== */
-.slot-machine{
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  width:min(90vw,320px);
-  margin-bottom:20px;
-  filter:drop-shadow(0 0 40px rgba(255,150,0,0.3));
+.config-row { display:flex; gap:24px; align-items:center; flex-wrap:wrap; margin-bottom:8px; }
+.config-item { display:flex; flex-direction:column; gap:6px; }
+.config-label { font-size:0.8rem; color:#ffd700; letter-spacing:2px; text-transform:uppercase; font-weight:700; }
+select {
+  background:rgba(255,215,0,0.1); border:1px solid rgba(255,215,0,0.35);
+  border-radius:10px; color:#fff; padding:10px 14px;
+  font-size:1rem; font-weight:600; cursor:pointer; outline:none;
 }
-/* TOPPER */
-.sm-topper{
-  width:80%;
-  background:linear-gradient(180deg,#4a0000,#800000,#4a0000);
-  border:3px solid #ffd700;
-  border-bottom:none;
-  border-radius:16px 16px 0 0;
-  padding:8px 10px 12px;
-  text-align:center;
-  position:relative;
-  z-index:2;
-  box-shadow:0 -6px 24px rgba(255,80,0,0.4),inset 0 1px 0 rgba(255,215,0,0.3);
+select option { background:#1a1a2e; }
+.group-names-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; }
+.group-name-field { display:flex; flex-direction:column; gap:5px; flex:1; min-width:140px; }
+.group-name-label { font-size:0.75rem; letter-spacing:2px; color:rgba(255,255,255,0.4); text-transform:uppercase; }
+.group-name-input {
+  background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15);
+  border-radius:10px; color:#fff; padding:9px 13px;
+  font-size:0.95rem; font-weight:600; outline:none; width:100%;
+  transition:border-color .25s, background .25s;
 }
-.topper-lights{
-  display:flex;justify-content:center;gap:5px;margin-bottom:5px;
+.group-name-input:focus { border-color:#ffd700; background:rgba(255,215,0,0.1); }
+.teams-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:10px; margin-top:4px;
 }
-.tl{
-  width:8px;height:8px;border-radius:50%;
-  animation:tlblink 1s ease-in-out infinite;
+.team-input {
+  background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15);
+  border-radius:10px; color:#fff; padding:10px 13px;
+  font-size:0.95rem; font-weight:600; outline:none; width:100%;
+  transition:border-color .25s, background .25s;
 }
-.tl:nth-child(odd){background:#ffd700;box-shadow:0 0 8px #ffd700;}
-.tl:nth-child(even){background:#ff4500;box-shadow:0 0 8px #ff4500;animation-delay:.5s;}
-@keyframes tlblink{0%,100%{opacity:1;}50%{opacity:.2;}}
-.topper-title{
-  font-size:clamp(.9rem,4vw,1.15rem);font-weight:900;letter-spacing:4px;
-  text-transform:uppercase;
-  background:linear-gradient(180deg,#fff8dc,#ffd700,#b8860b);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+.team-input:focus { border-color:#ffd700; background:rgba(255,215,0,0.08); }
+.team-input::placeholder { color:rgba(255,255,255,0.2); }
+.team-input.hidden { display:none; }
+.error-msg { color:#ff5555; font-size:.9rem; text-align:center; min-height:22px; font-weight:700; }
+.btn-start {
+  background:linear-gradient(135deg,#ffd700,#ff8c00);
+  border:none; border-radius:50px; color:#0a0a0f;
+  font-size:1.05rem; font-weight:900; letter-spacing:3px;
+  padding:18px 52px; cursor:pointer; text-transform:uppercase;
+  box-shadow:0 0 30px rgba(255,215,0,0.4); transition:all .3s;
 }
-.topper-sub{font-size:.5rem;letter-spacing:4px;color:rgba(255,215,0,0.45);margin-top:2px;}
-/* MAIN BODY */
-.sm-body{
-  width:100%;
-  background:linear-gradient(160deg,#1c0800,#2e1200,#180600);
-  border:3px solid #ffd700;
-  border-radius:6px 6px 2px 2px;
-  position:relative;
-  overflow:visible;
-  box-shadow:
-    0 0 0 1px #8a5a00,
-    inset 2px 0 10px rgba(255,215,0,0.04),
-    inset -2px 0 10px rgba(255,215,0,0.04),
-    inset 0 0 40px rgba(0,0,0,0.7);
-  padding:14px 14px 18px;
+.btn-start:hover { transform:translateY(-3px) scale(1.05); box-shadow:0 0 50px rgba(255,215,0,0.7); }
+#resultScreen { display:none; padding:40px 16px; max-width:900px; margin:0 auto; }
+.result-title {
+  font-size:clamp(1.4rem,4vw,2.2rem); font-weight:900; text-align:center;
+  background:linear-gradient(135deg,#ffd700,#ff8c00);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  letter-spacing:3px; margin-bottom:8px;
 }
-/* golden top trim */
-.sm-body::before{
-  content:'';position:absolute;top:6px;left:6px;right:6px;height:2px;
-  background:linear-gradient(90deg,transparent,#ffd700,#ff8c00,#ffd700,transparent);
-  opacity:.5;
+.result-sub { color:rgba(255,255,255,0.4); text-align:center; letter-spacing:2px; font-size:.9rem; margin-bottom:32px; }
+.groups-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:16px; margin-bottom:40px;
 }
-/* side decoration dots */
-.sm-side{
-  position:absolute;top:16px;bottom:16px;width:12px;
-  display:flex;flex-direction:column;justify-content:space-around;align-items:center;
+.group-card { border-radius:16px; padding:20px; border:1px solid; background:rgba(255,255,255,0.03); }
+.gc0{border-color:rgba(255,80,80,.5);} .gc1{border-color:rgba(80,140,255,.5);}
+.gc2{border-color:rgba(80,220,80,.5);} .gc3{border-color:rgba(255,190,60,.5);}
+.group-head {
+  font-size:.85rem; font-weight:700; letter-spacing:3px;
+  margin-bottom:12px; padding-bottom:10px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  display:flex; align-items:center; gap:10px; text-transform:uppercase;
 }
-.sm-side.l{left:4px;}
-.sm-side.r{right:4px;}
-.sd{
-  width:7px;height:7px;border-radius:50%;
-  animation:tlblink 2s ease-in-out infinite;
+.gc0 .group-head{color:#ff7070;} .gc1 .group-head{color:#7aaaff;}
+.gc2 .group-head{color:#70ff70;} .gc3 .group-head{color:#ffd070;}
+.gbadge {
+  width:26px; height:26px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.75rem; font-weight:900; flex-shrink:0;
 }
-.sm-side.l .sd:nth-child(odd){background:#ffd700;box-shadow:0 0 5px #ffd700;}
-.sm-side.l .sd:nth-child(even){background:#ff4500;box-shadow:0 0 5px #ff4500;animation-delay:.4s;}
-.sm-side.r .sd:nth-child(odd){background:#ff4500;box-shadow:0 0 5px #ff4500;}
-.sm-side.r .sd:nth-child(even){background:#ffd700;box-shadow:0 0 5px #ffd700;animation-delay:.7s;}
-/* pay table */
-.pay-strip{
-  display:flex;justify-content:space-around;
-  background:rgba(0,0,0,0.5);
-  border:1px solid rgba(255,215,0,0.2);
-  border-radius:5px;padding:4px 8px;
-  font-size:.55rem;letter-spacing:2px;color:rgba(255,215,0,0.55);
-  margin-bottom:12px;
+.gc0 .gbadge{background:rgba(255,80,80,.2);border:1px solid #ff7070;}
+.gc1 .gbadge{background:rgba(80,140,255,.2);border:1px solid #7aaaff;}
+.gc2 .gbadge{background:rgba(80,220,80,.2);border:1px solid #70ff70;}
+.gc3 .gbadge{background:rgba(255,190,60,.2);border:1px solid #ffd070;}
+.team-entry {
+  padding:7px 11px; border-radius:8px;
+  font-size:.9rem; font-weight:700; margin-bottom:6px;
+  display:flex; align-items:center; gap:8px;
 }
-/* REEL FRAME */
-.reel-frame{
-  background:#000;
-  border:3px solid #7a4a00;
-  border-radius:8px;
-  box-shadow:0 0 0 2px #ffd700, inset 0 0 30px rgba(0,0,0,.9), 0 0 20px rgba(255,150,0,0.25);
-  position:relative;
-  margin:0 18px;
+.gc0 .team-entry{background:rgba(255,80,80,.1);} .gc1 .team-entry{background:rgba(80,140,255,.1);}
+.gc2 .team-entry{background:rgba(80,220,80,.1);} .gc3 .team-entry{background:rgba(255,190,60,.1);}
+.tnum { font-size:.7rem; opacity:.4; min-width:16px; }
+.share-box {
+  background:rgba(255,255,255,0.03); border:1px solid rgba(255,215,0,0.2);
+  border-radius:16px; padding:24px; text-align:center; margin-bottom:32px;
 }
-.reel-inner{
-  height:160px;overflow:hidden;border-radius:5px;
-  position:relative;
+.share-box p { color:rgba(255,255,255,0.5); font-size:.95rem; line-height:1.7; margin-bottom:20px; }
+.btn-row { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.btn-primary {
+  background:linear-gradient(135deg,#ffd700,#ff8c00); border:none; border-radius:50px;
+  color:#0a0a0f; font-size:.9rem; font-weight:900; letter-spacing:2px;
+  padding:16px 40px; cursor:pointer; text-transform:uppercase; transition:all .3s;
+  box-shadow:0 0 20px rgba(255,215,0,0.3);
 }
-.reel-inner::before,.reel-inner::after{
-  content:'';position:absolute;left:0;right:0;height:52px;z-index:3;pointer-events:none;
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 0 35px rgba(255,215,0,0.6); }
+.btn-ghost {
+  background:transparent; border:2px solid rgba(255,215,0,0.4);
+  border-radius:50px; color:#ffd700; font-size:.9rem; font-weight:700;
+  letter-spacing:2px; padding:16px 40px; cursor:pointer; text-transform:uppercase; transition:all .3s;
 }
-.reel-inner::before{top:0;background:linear-gradient(to bottom,rgba(0,0,0,.95),transparent);}
-.reel-inner::after{bottom:0;background:linear-gradient(to top,rgba(0,0,0,.95),transparent);}
-.win-line{
-  position:absolute;top:50%;transform:translateY(-50%);
-  left:-3px;right:-3px;height:62px;z-index:4;pointer-events:none;
-  border-top:2px solid rgba(255,215,0,.8);
-  border-bottom:2px solid rgba(255,215,0,.8);
-  box-shadow:0 -1px 10px rgba(255,215,0,.4),0 1px 10px rgba(255,215,0,.4);
-}
-.screw{
-  position:absolute;width:9px;height:9px;border-radius:50%;
-  background:radial-gradient(circle at 35% 35%,#aaa,#444);
-  border:1px solid #555;z-index:5;
-}
-.screw.tl{top:-2px;left:-2px;} .screw.tr{top:-2px;right:-2px;}
-.screw.bl{bottom:-2px;left:-2px;} .screw.br{bottom:-2px;right:-2px;}
-.reel{display:flex;flex-direction:column;will-change:transform;}
-.reel-item{
-  height:160px;flex-shrink:0;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-}
-.reel-letter{font-size:4rem;font-weight:900;line-height:1;}
-.reel-gname{font-size:.62rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;}
-/* CONTROLS BELOW REEL */
-.sm-controls{
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-  margin-top:14px;
-}
-.coin-slot{width:44px;height:8px;background:linear-gradient(180deg,#111,#333);border-radius:4px;border:2px solid #555;box-shadow:inset 0 2px 4px rgba(0,0,0,.8);transition:all .3s;cursor:pointer;}
-.coin-slot-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;}
-.coin-slot-wrap.coin-ready .coin-slot{border-color:#ffd700;box-shadow:0 0 14px #ffd700,inset 0 2px 4px rgba(0,0,0,.8);animation:coinPulse 1s ease-in-out infinite;}
-.coin-slot-wrap.coin-inserted .coin-slot{border-color:#00ff88;box-shadow:0 0 12px #00ff88;}
-@keyframes coinPulse{0%,100%{box-shadow:0 0 6px #ffd700,inset 0 2px 4px rgba(0,0,0,.8);}50%{box-shadow:0 0 20px #ffd700,inset 0 2px 4px rgba(0,0,0,.8);}}
-@keyframes coinDrop{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(60px) scale(.4);}}
-.coin-label{font-size:.45rem;letter-spacing:2px;color:rgba(255,215,0,0.3);text-transform:uppercase;margin-top:2px;}
-.sm-status{font-size:.68rem;font-weight:700;letter-spacing:2px;color:rgba(255,215,0,.7);text-transform:uppercase;min-height:16px;text-align:center;}
-/* countdown ring */
-.cring{position:relative;width:52px;height:52px;display:none;}
-.cring svg{transform:rotate(-90deg);}
-.cring circle{fill:none;stroke:rgba(255,215,0,0.15);stroke-width:4;}
-.cprog{stroke:#ffd700;stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset 1s linear;}
-.cring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.95rem;font-weight:900;color:#ffd700;}
-/* LEVER */
-.sm-lever{
-  position:absolute;
-  right:-54px;
-  top:20px;
-  width:54px;
-  display:flex;flex-direction:column;align-items:center;
-  cursor:pointer;user-select:none;z-index:10;
-  transition:opacity .3s;
-}
-.sm-lever.locked{opacity:.25;pointer-events:none;}
-.lever-plate{
-  width:22px;height:76px;
-  background:linear-gradient(180deg,#666,#3a3a3a,#222);
-  border-radius:5px;border:1px solid rgba(255,215,0,0.25);
-  position:relative;
-  box-shadow:inset 0 2px 6px rgba(0,0,0,.7),2px 0 6px rgba(0,0,0,.4);
-}
-.lever-plate::before,.lever-plate::after{
-  content:'';position:absolute;left:50%;transform:translateX(-50%);
-  width:6px;height:6px;border-radius:50%;
-  background:radial-gradient(circle at 35% 35%,#aaa,#444);
-  border:1px solid #555;
-}
-.lever-plate::before{top:5px;} .lever-plate::after{bottom:5px;}
-.lever-rod-wrap{
-  position:absolute;
-  bottom:10px;left:50%;
-  transform-origin:bottom center;
-  transform:translateX(-50%) rotate(0deg);
-  transition:transform .4s cubic-bezier(.4,0,.2,1);
-}
-.lever-rod-wrap.idle-anim{animation:leverBob 2.2s ease-in-out infinite;}
-.lever-rod-wrap.pulled{transform:translateX(-50%) rotate(46deg)!important;animation:none!important;}
-@keyframes leverBob{
-  0%,100%{transform:translateX(-50%) rotate(0deg);}
-  50%{transform:translateX(-50%) rotate(-10deg);}
-}
-.lever-rod{
-  width:11px;height:80px;
-  background:linear-gradient(90deg,#c8a800,#ffd700,#fff5a0,#ffd700,#a07000);
-  border-radius:5px;
-  box-shadow:0 0 12px rgba(255,215,0,.5);
-}
-.lever-knob{
-  width:34px;height:34px;border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,#fff8dc,#ffd700 40%,#b8860b 80%,#7a4a00);
-  border:2px solid rgba(255,215,0,.6);
-  box-shadow:0 0 18px rgba(255,215,0,.9),0 0 36px rgba(255,140,0,.4),0 5px 10px rgba(0,0,0,.6),inset 0 2px 3px rgba(255,255,255,.3);
-  position:absolute;
-  top:-17px;left:50%;transform:translateX(-50%);
-}
-.lever-socket{
-  width:30px;height:18px;
-  background:linear-gradient(180deg,#666,#333);
-  border-radius:5px;
-  border:1px solid rgba(255,215,0,.3);
-  box-shadow:0 4px 8px rgba(0,0,0,.7);
-  margin-top:-2px;
-}
-.lever-hint{
-  margin-top:7px;font-size:.55rem;letter-spacing:1px;
-  color:rgba(255,215,0,.45);text-align:center;line-height:1.3;
-}
-.lever-hint.active{color:rgba(255,215,0,.9);animation:hb 1.3s ease-in-out infinite;}
-@keyframes hb{0%,100%{opacity:.4;}50%{opacity:1;}}
-/* BASE */
-.sm-base{
-  width:108%;
-  height:20px;
-  background:linear-gradient(180deg,#ffd700,#b8860b,#7a4a00);
-  border-radius:0 0 16px 16px;
-  box-shadow:0 6px 16px rgba(0,0,0,.7);
-  display:flex;align-items:center;justify-content:center;
-}
-.sm-base-text{font-size:.45rem;letter-spacing:4px;color:rgba(0,0,0,.4);font-weight:700;text-transform:uppercase;}
-.sm-tray{
-  width:50%;height:24px;
-  background:linear-gradient(180deg,#111,#1a1a1a);
-  border:2px solid #5a3a00;
-  border-top:none;
-  border-radius:0 0 20px 20px;
-  box-shadow:inset 0 3px 8px rgba(0,0,0,.8);
-}
-/* RESULT */
-.result-area{display:none;flex-direction:column;align-items:center;gap:18px;width:100%;max-width:320px;animation:fadeUp .7s ease-out;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-.group-badge{padding:18px 36px;border-radius:16px;display:flex;flex-direction:column;align-items:center;gap:5px;}
-.big-letter{font-size:clamp(4rem,18vw,6rem);font-weight:900;line-height:1;animation:glow 2s ease-in-out infinite;}
-@keyframes glow{0%,100%{filter:brightness(1);}50%{filter:brightness(1.6) drop-shadow(0 0 20px currentColor);}}
-.big-gname{font-size:clamp(1rem,4vw,1.3rem);font-weight:700;letter-spacing:3px;}
-.congrats{font-size:.9rem;font-weight:600;color:rgba(255,255,255,.5);line-height:1.8;text-align:center;}
-.mates-box{width:100%;border-radius:12px;padding:16px;background:rgba(255,255,255,0.03);}
-.mates-title{font-size:.6rem;letter-spacing:3px;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.07);text-align:center;}
-.mate-row{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:7px;margin-bottom:5px;font-size:.88rem;font-weight:700;}
-.beers{display:flex;gap:10px;font-size:1.8rem;justify-content:center;animation:wave 1.2s ease-in-out infinite;}
-@keyframes wave{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
-.reset-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:50px;color:rgba(255,255,255,.5);font-size:.8rem;font-weight:700;letter-spacing:2px;padding:12px 28px;cursor:pointer;text-transform:uppercase;transition:all .25s;}
-.reset-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
-.fw-c{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden;}
-.fw{position:absolute;border-radius:50%;animation:fwE 1s ease-out forwards;}
-@keyframes fwE{0%{opacity:1;transform:translate(0,0);}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0);}}
+.btn-ghost:hover { background:rgba(255,215,0,0.08); border-color:#ffd700; transform:translateY(-2px); }
+.fw-c { position:fixed; inset:0; pointer-events:none; z-index:999; overflow:hidden; }
+.fw { position:absolute; border-radius:50%; animation:fwOut 1s ease-out forwards; }
+@keyframes fwOut { 0%{opacity:1;transform:translate(0,0) scale(1);} 100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0);} }
 </style>
 </head>
 <body>
 <div class="fw-c" id="fwc"></div>
-<div class="page-header">
-  <div class="page-logo">🏓 Beerpong Turnier 2026</div>
-  <div id="teamDisplay" style="display:none;font-size:clamp(1rem,4vw,1.4rem);font-weight:900;letter-spacing:3px;text-align:center;margin:6px 0 2px;padding:8px 24px;border-radius:50px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.35);color:#ffd700;"></div>
-<div class="page-title">🎰 AUSLOSUNG</div>
+
+<div id="setupScreen" class="screen">
+  <div class="main-title">🏓 BEERPONG</div>
+  <div class="main-title" style="font-size:clamp(1.2rem,3vw,2rem);margin-top:-12px;">TURNIER AUSLOSUNG</div>
+  <div class="subtitle">⚡ Gruppen Draw Tool ⚡</div>
+  <div class="card">
+    <div class="card-title">⚙️ Einstellungen</div>
+    <div class="config-row">
+      <div class="config-item">
+        <span class="config-label">Anzahl Gruppen</span>
+        <select id="numGroups" onchange="onSettingsChange()">
+          <option value="2">2 Gruppen</option>
+          <option value="3">3 Gruppen</option>
+          <option value="4" selected>4 Gruppen</option>
+        </select>
+      </div>
+      <div class="config-item">
+        <span class="config-label">Anzahl Teams</span>
+        <select id="numTeams" onchange="onSettingsChange()">
+          <option value="4">4 Teams</option><option value="6">6 Teams</option>
+          <option value="8" selected>8 Teams</option><option value="10">10 Teams</option>
+          <option value="12">12 Teams</option><option value="14">14 Teams</option>
+          <option value="16">16 Teams</option><option value="18">18 Teams</option>
+          <option value="20">20 Teams</option>
+        </select>
+      </div>
+    </div>
+    <div class="card-title" style="margin-top:22px;">🏷️ Gruppennamen (optional)</div>
+    <div class="group-names-row" id="groupNamesRow"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">🍺 Teamnamen eingeben</div>
+    <div class="teams-grid" id="teamsGrid"></div>
+  </div>
+  <div class="error-msg" id="errorMsg"></div>
+  <button class="btn-start" onclick="startDraw()">🎲 AUSLOSUNG DURCHFÜHREN</button>
 </div>
 
-<div class="team-selector" id="selectorBox">
-  <div class="sel-label">👇 Wähle dein Team</div>
-  <select class="team-select" id="teamSelect" onchange="onTeamSelect()"></select>
-  <div style="font-size:.62rem;color:rgba(255,255,255,.3);letter-spacing:1px;">Dann Hebel am Automaten ziehen!</div>
-</div>
-
-<!-- FULL SLOT MACHINE -->
-<div class="slot-machine" id="machineScene">
-  <!-- Topper -->
-  <div class="sm-topper">
-    <div class="topper-lights">
-      <div class="tl"></div><div class="tl"></div><div class="tl"></div>
-      <div class="tl"></div><div class="tl"></div><div class="tl"></div>
-      <div class="tl"></div><div class="tl"></div>
-    </div>
-    <div class="topper-title">BEERPONG</div>
-    <div class="topper-sub">⚡ GRUPPEN AUSLOSUNG ⚡</div>
-  </div>
-
-  <!-- Body -->
-  <div class="sm-body">
-    <div class="sm-side l">
-      <div class="sd"></div><div class="sd"></div><div class="sd"></div>
-      <div class="sd"></div><div class="sd"></div>
-    </div>
-    <div class="sm-side r">
-      <div class="sd"></div><div class="sd"></div><div class="sd"></div>
-      <div class="sd"></div><div class="sd"></div>
-    </div>
-
-    <div class="pay-strip">
-      <span>🍺 PROST</span><span>🏓 MATCH</span><span>🏆 CHAMP</span>
-    </div>
-
-    <div class="reel-frame">
-      <div class="screw tl"></div><div class="screw tr"></div>
-      <div class="screw bl"></div><div class="screw br"></div>
-      <div class="reel-inner">
-        <div class="reel" id="reel">
-          <div class="reel-item">
-            <div class="reel-letter" style="color:#ffd700;text-shadow:0 0 20px #ffd70088">?</div>
-            <div class="reel-gname" style="color:#ffd700">Wähle Team</div>
-          </div>
-        </div>
-      </div>
-      <div class="win-line"></div>
-    </div>
-
-    <div class="sm-controls">
-      <div class="cring" id="cring">
-        <svg width="52" height="52" viewBox="0 0 52 52">
-          <circle cx="26" cy="26" r="22"/>
-          <circle class="cprog" id="cprog" cx="26" cy="26" r="22" stroke-dasharray="138" stroke-dashoffset="0"/>
-        </svg>
-        <div class="cring-num" id="cringNum">30</div>
-      </div>
-      <div class="sm-status" id="spinStatus">Wähle dein Team!</div>
-      <div class="coin-slot-wrap" id="coinSlotWrap" onclick="insertCoin()">
-        <div class="coin-slot" id="coinSlot"></div>
-        <div class="coin-label" id="coinLabel">🪙 INSERT COIN</div>
-      </div>
-    </div>
-
-    <!-- LEVER -->
-    <div class="sm-lever locked" id="leverEl" onclick="startSpin()">
-      <div class="lever-plate">
-        <div class="lever-rod-wrap idle-anim" id="leverRod">
-          <div class="lever-knob"></div>
-          <div class="lever-rod"></div>
-        </div>
-      </div>
-      <div class="lever-socket"></div>
-      <div class="lever-hint" id="leverHint">⬆ Team<br>wählen</div>
+<div id="resultScreen" class="screen">
+  <div class="result-title">✅ AUSLOSUNG ABGESCHLOSSEN</div>
+  <div class="result-sub">Erstelle jetzt die Turnier-Seite und teile sie in der WhatsApp-Gruppe</div>
+  <div class="groups-grid" id="groupsGrid"></div>
+  <div class="share-box">
+    <p>📱 Lade die <strong>eine</strong> Turnier-Seite herunter und schicke sie in die WhatsApp-Gruppe.<br>
+    Jedes Team wählt seinen Namen aus — und zieht dann an der Slot Machine!</p>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="downloadSharedPage()">🌐 TURNIER-SEITE ERSTELLEN</button>
+      <button class="btn-ghost" onclick="resetAll()">↩ NEU AUSLOSEN</button>
     </div>
   </div>
-
-  <!-- Base -->
-  <div class="sm-base"><div class="sm-base-text">★ Lucky Beerpong 3000 ★</div></div>
-  <div class="sm-tray"></div>
-</div>
-
-<!-- RESULT -->
-<div class="result-area" id="resultArea">
-  <div class="group-badge" id="groupBadge">
-    <div class="big-letter" id="bigLetter"></div>
-    <div class="big-gname" id="bigGname"></div>
-  </div>
-  <div class="congrats" id="congratsTxt"></div>
-  <div class="mates-box" id="matesBox" style="display:none">
-    <div class="mates-title">👥 Eure Gruppe</div>
-    <div id="matesList"></div>
-  </div>
-  <div class="beers">🍺🏓🏆🏓🍺</div>
-  <button class="reset-btn" onclick="resetPage()">↩ Anderes Team</button>
 </div>
 
 <script>
-(function(){
-  var RESULTS=[{"team":"Nass & Spaß","groupIdx":0,"groupMembers":["Nass & Spaß","Triple Threat"]},{"team":"Schaumkronen FC","groupIdx":1,"groupMembers":["Schaumkronen FC","Shot Stars"]},{"team":"Hopfen & Malz","groupIdx":2,"groupMembers":["Hopfen & Malz","Die Untrinkbaren"]},{"team":"Die Bierkönige","groupIdx":3,"groupMembers":["Die Bierkönige","Schaum Alarm"]},{"team":"Triple Threat","groupIdx":0,"groupMembers":["Nass & Spaß","Triple Threat"]},{"team":"Shot Stars","groupIdx":1,"groupMembers":["Schaumkronen FC","Shot Stars"]},{"team":"Die Untrinkbaren","groupIdx":2,"groupMembers":["Hopfen & Malz","Die Untrinkbaren"]},{"team":"Schaum Alarm","groupIdx":3,"groupMembers":["Die Bierkönige","Schaum Alarm"]}];
-  var GNAMES=["Gruppe A","Gruppe B","Gruppe C","Gruppe D"];
-  var COLORS=["#ff7070","#7aaaff","#70ff70","#ffd070"];
-  var BG=["rgba(255,80,80,0.15)","rgba(80,140,255,0.15)","rgba(80,220,80,0.15)","rgba(255,190,60,0.15)"];
-  var ITEM_H=160,SPIN_SECS=30;
+const GROUP_COLORS = ['#ff7070','#7aaaff','#70ff70','#ffd070'];
+const GROUP_BG     = ['rgba(255,80,80,0.15)','rgba(80,140,255,0.15)','rgba(80,220,80,0.15)','rgba(255,190,60,0.15)'];
+const DEF_NAMES    = ['Gruppe A','Gruppe B','Gruppe C','Gruppe D'];
+const SAMPLES      = [
+  'Die Bierkönige','Schaumkronen FC','Hopfen & Malz','Die Untrinkbaren',
+  'Shot Stars','Triple Threat','Nass & Spaß','Schaum Alarm',
+  'Prost Pals','Golden Cups','Die Bouncer','Biber am Ball',
+  'Tisch Typen','Splash Brothers','No Mercy','Flüssige Energie',
+  'Das Dritte Bier','Würfeladler','Team Kumpel','Alles oder Bier'
+];
+let drawResult = [];
 
-  var sel=document.getElementById('teamSelect');
+function buildGroupNameInputs() {
+  const n = parseInt(document.getElementById('numGroups').value);
+  const old = [...document.querySelectorAll('.gname-input')].map(i => i.value);
+  const row = document.getElementById('groupNamesRow'); row.innerHTML = '';
+  for (let g = 0; g < n; g++) {
+    const field = document.createElement('div'); field.className = 'group-name-field';
+    const lbl = document.createElement('span'); lbl.className = 'group-name-label'; lbl.textContent = 'Gruppe '+(g+1);
+    const inp = document.createElement('input'); inp.type = 'text';
+    inp.className = 'group-name-input gname-input';
+    inp.value = (old[g] !== undefined ? old[g] : DEF_NAMES[g]);
+    inp.maxLength = 20; inp.placeholder = DEF_NAMES[g];
+    field.appendChild(lbl); field.appendChild(inp); row.appendChild(field);
+  }
+}
+
+function buildTeamInputs() {
+  const n = parseInt(document.getElementById('numTeams').value);
+  const old = [...document.querySelectorAll('.team-input')].map(i => i.value);
+  const grid = document.getElementById('teamsGrid'); grid.innerHTML = '';
+  for (let i = 0; i < 20; i++) {
+    const inp = document.createElement('input'); inp.type = 'text';
+    inp.className = 'team-input' + (i >= n ? ' hidden' : '');
+    inp.placeholder = 'Team ' + (i+1);
+    inp.value = (old[i] !== undefined ? old[i] : (SAMPLES[i]||''));
+    inp.maxLength = 28; grid.appendChild(inp);
+  }
+}
+
+function onSettingsChange() {
+  buildGroupNameInputs();
+  const n = parseInt(document.getElementById('numTeams').value);
+  document.querySelectorAll('.team-input').forEach((inp,i) => {
+    i < n ? inp.classList.remove('hidden') : inp.classList.add('hidden');
+  });
+}
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function getGroupNames(){return [...document.querySelectorAll('.gname-input')].map((inp,i)=>inp.value.trim()||DEF_NAMES[i]);}
+
+function startDraw() {
+  const errEl = document.getElementById('errorMsg'); errEl.textContent = '';
+  const numGroups = parseInt(document.getElementById('numGroups').value);
+  const numTeams  = parseInt(document.getElementById('numTeams').value);
+  const teams = [...document.querySelectorAll('.team-input:not(.hidden)')].map(i=>i.value.trim()).filter(Boolean);
+  if (teams.length < numTeams) { errEl.textContent = '⚠️ Bitte alle '+numTeams+' Teamnamen eingeben!'; return; }
+  const groupNames = getGroupNames();
+  const shuffled = shuffle(teams);
+  drawResult = shuffled.map((team,i) => ({ team, groupIdx: i % numGroups }));
+  for (let g = 0; g < numGroups; g++) {
+    const members = drawResult.filter(r => r.groupIdx === g).map(r => r.team);
+    drawResult.forEach(r => { if (r.groupIdx === g) r.groupMembers = members; });
+  }
+  renderResults(numGroups, groupNames);
+  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'block';
+  fireworks(); setTimeout(fireworks,700); setTimeout(fireworks,1400);
+}
+
+function renderResults(numGroups, groupNames) {
+  const gg = document.getElementById('groupsGrid');
+  gg.innerHTML = ''; gg.style.gridTemplateColumns = 'repeat('+Math.min(numGroups,4)+',1fr)';
+  for (let g = 0; g < numGroups; g++) {
+    const members = drawResult.filter(r => r.groupIdx === g);
+    const card = document.createElement('div'); card.className = 'group-card gc'+g;
+    card.innerHTML = '<div class="group-head"><div class="gbadge">'+String.fromCharCode(65+g)+'</div>'+groupNames[g]+'</div>'
+      + members.map((m,i)=>'<div class="team-entry"><span class="tnum">'+(i+1)+'.</span>'+m.team+'</div>').join('');
+    gg.appendChild(card);
+  }
+}
+
+function downloadSharedPage() {
+  const numGroups = parseInt(document.getElementById('numGroups').value);
+  const groupNames = getGroupNames();
+  const html = buildSharedPage(drawResult, numGroups, groupNames);
+  const blob = new Blob([html], {type:'text/html'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a'); a.href = url;
+  a.download = 'Beerpong_Turnier_Auslosung.html';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+function resetAll() {
+  drawResult = [];
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('setupScreen').style.display  = 'flex';
+}
+
+function fireworks() {
+  const c = document.getElementById('fwc');
+  const cols = ['#ffd700','#ff4500','#ff69b4','#00bfff','#7fff00','#ff8c00','#fff'];
+  const cx = 10+Math.random()*80, cy = 10+Math.random()*60;
+  for (let i=0;i<50;i++) {
+    const fw = document.createElement('div'); fw.className = 'fw';
+    const angle = (i/50)*Math.PI*2, dist = 70+Math.random()*130;
+    fw.style.cssText = 'left:'+cx+'%;top:'+cy+'%;background:'+cols[~~(Math.random()*cols.length)]+';width:'+(3+Math.random()*5)+'px;height:'+(3+Math.random()*5)+'px;--tx:'+Math.cos(angle)*dist+'px;--ty:'+Math.sin(angle)*dist+'px;animation-duration:'+(0.7+Math.random()*0.7)+'s;animation-delay:'+Math.random()*0.3+'s;';
+    c.appendChild(fw); setTimeout(()=>fw.remove(),2500);
+  }
+}
+
+function buildSharedPage(results, numGroups, groupNames) {
+  const DR = JSON.stringify(results);
+  const GN = JSON.stringify(groupNames);
+  const GC = JSON.stringify(GROUP_COLORS);
+  const GB = JSON.stringify(GROUP_BG);
+
+  // We build the inner HTML as a string
+  const innerCSS = `
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  background:#0a0a0f;font-family:Arial,sans-serif;color:#fff;
+  display:flex;flex-direction:column;align-items:center;
+  min-height:100vh;overflow-y:auto;
+  user-select:none;-webkit-tap-highlight-color:transparent;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 50% 20%,rgba(255,215,0,0.08) 0%,transparent 60%);
+  pointer-events:none;
+}
+.wrap{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;align-items:center;
+  gap:22px;padding:28px 20px 60px;width:100%;max-width:460px;text-align:center;
+}
+.logo{font-size:.75rem;letter-spacing:4px;color:rgba(255,215,0,0.4);text-transform:uppercase;}
+.page-title{
+  font-size:clamp(1.6rem,7vw,2.4rem);font-weight:900;
+  background:linear-gradient(135deg,#ffd700,#ff8c00,#ff4500);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:3px;animation:pulse 3s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{filter:brightness(1);}50%{filter:brightness(1.4);}}
+.selector-box{
+  width:100%;background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,215,0,0.25);border-radius:20px;padding:24px;
+  display:flex;flex-direction:column;gap:16px;
+}
+.selector-label{font-size:.75rem;letter-spacing:3px;color:rgba(255,255,255,0.35);text-transform:uppercase;}
+.team-select{
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.2);
+  border-radius:12px;color:#fff;padding:14px 16px;
+  font-size:1rem;font-weight:700;cursor:pointer;outline:none;width:100%;
+}
+.team-select:focus{border-color:#ffd700;}
+.team-select option{background:#1a1a2e;}
+.go-btn{
+  padding:16px;width:100%;
+  background:linear-gradient(135deg,#ffd700,#ff8c00);
+  border:none;border-radius:50px;
+  color:#0a0a0f;font-size:1.05rem;font-weight:900;
+  letter-spacing:2px;cursor:pointer;text-transform:uppercase;
+  box-shadow:0 0 30px rgba(255,215,0,0.4);
+  animation:btnpulse 1.5s ease-in-out infinite;
+  transition:transform .15s;
+}
+@keyframes btnpulse{
+  0%,100%{box-shadow:0 0 25px rgba(255,215,0,0.4);}
+  50%{box-shadow:0 0 55px rgba(255,215,0,0.9);transform:scale(1.02);}
+}
+.go-btn:disabled{opacity:.3;cursor:default;animation:none;transform:none;}
+.go-btn:not(:disabled):active{transform:scale(0.97)!important;}
+
+/* ===== SLOT MACHINE SCREEN ===== */
+.machine-screen{display:none;flex-direction:column;align-items:center;gap:18px;width:100%;}
+
+.spin-status{
+  font-size:.85rem;font-weight:700;letter-spacing:2px;
+  color:rgba(255,215,0,0.8);text-transform:uppercase;min-height:22px;text-align:center;
+}
+
+/* Cabinet */
+.cabinet-wrap{position:relative;display:inline-block;}
+.cabinet{
+  position:relative;
+  width:min(76vw,300px);
+  background:linear-gradient(160deg,#2c1d06,#1a1000,#0f0800);
+  border:3px solid #8b6914;
+  border-radius:22px 22px 16px 16px;
+  padding:16px 16px 20px;
+  box-shadow:
+    0 0 0 1px #ffd70033,
+    0 0 60px rgba(255,180,0,0.18),
+    inset 0 2px 0 rgba(255,215,0,0.12),
+    inset 0 -2px 0 rgba(0,0,0,0.4);
+}
+.cabinet-top-bar{
+  background:linear-gradient(90deg,#6b4e10,#ffd700,#e8a800,#ffd700,#6b4e10);
+  border-radius:10px 10px 0 0;
+  height:8px;margin:-16px -16px 14px;
+  box-shadow:0 0 18px rgba(255,215,0,0.6);
+}
+.cabinet-label{
+  font-size:.6rem;letter-spacing:5px;color:#ffd700;
+  text-transform:uppercase;text-align:center;
+  margin-bottom:12px;opacity:.75;
+}
+/* reel frame */
+.reel-frame{
+  background:#000;
+  border:3px solid #4a3208;
+  border-radius:12px;
+  padding:5px;
+  box-shadow:inset 0 0 30px rgba(0,0,0,0.95), 0 0 18px rgba(255,180,0,0.08);
+  position:relative;
+}
+.reel-frame::before,.reel-frame::after{
+  content:'';position:absolute;left:5px;right:5px;height:52px;z-index:5;pointer-events:none;border-radius:7px;
+}
+.reel-frame::before{top:5px;background:linear-gradient(to bottom,#000 10%,transparent);}
+.reel-frame::after{bottom:5px;background:linear-gradient(to top,#000 10%,transparent);}
+.reel-window{height:140px;overflow:hidden;border-radius:7px;position:relative;}
+.reel{display:flex;flex-direction:column;will-change:transform;}
+.reel-item{
+  height:140px;flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+}
+.reel-letter{font-size:3.8rem;font-weight:900;line-height:1;}
+.reel-gname{font-size:.65rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;opacity:.9;}
+.reel-lines{
+  position:absolute;top:50%;transform:translateY(-50%);
+  left:0;right:0;height:140px;
+  border-top:3px solid rgba(255,215,0,0.85);
+  border-bottom:3px solid rgba(255,215,0,0.85);
+  pointer-events:none;z-index:6;
+  box-shadow:0 -1px 14px rgba(255,215,0,0.4),0 1px 14px rgba(255,215,0,0.4);
+}
+/* bottom lights */
+.lights-row{
+  display:flex;justify-content:center;gap:8px;margin-top:12px;
+}
+.dlight{
+  width:10px;height:10px;border-radius:50%;
+  animation:lblink 1.1s ease-in-out infinite;
+}
+.dlight:nth-child(1){background:#ff3300;box-shadow:0 0 7px #ff3300;}
+.dlight:nth-child(2){background:#ffd700;box-shadow:0 0 7px #ffd700;animation-delay:.37s;}
+.dlight:nth-child(3){background:#00cc44;box-shadow:0 0 7px #00cc44;animation-delay:.74s;}
+.dlight:nth-child(4){background:#ff3300;box-shadow:0 0 7px #ff3300;animation-delay:1.1s;}
+.dlight:nth-child(5){background:#ffd700;box-shadow:0 0 7px #ffd700;animation-delay:1.47s;}
+@keyframes lblink{0%,100%{opacity:1;}50%{opacity:.2;}}
+
+/* ===== LEVER ===== */
+.lever-outer{
+  position:absolute;
+  right:-44px;
+  top:16px;
+  width:40px;
+  display:flex;flex-direction:column;align-items:center;
+  cursor:pointer;
+  z-index:10;
+  touch-action:none;
+}
+.lever-hint{
+  font-size:.58rem;letter-spacing:2px;color:rgba(255,180,0,0.65);
+  text-transform:uppercase;
+  writing-mode:vertical-lr;text-orientation:mixed;
+  transform:rotate(180deg);
+  height:60px;margin-bottom:4px;
+  animation:hblink 1.4s ease-in-out infinite;
+}
+@keyframes hblink{0%,100%{opacity:.35;}50%{opacity:1;}}
+.lever-rod-wrap{
+  position:relative;
+  width:10px;
+  height:160px;
+  display:flex;align-items:flex-end;justify-content:center;
+}
+.lever-rod{
+  width:8px;
+  height:150px;
+  background:linear-gradient(90deg,#a07820,#ffd700,#c89030,#ffd700,#a07820);
+  border-radius:4px;
+  position:absolute;
+  bottom:0;
+  transform-origin:bottom center;
+  transform:rotate(20deg);
+  transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  box-shadow:2px 0 8px rgba(0,0,0,0.6);
+}
+.lever-ball{
+  width:28px;height:28px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#ff8844,#cc1100);
+  border:2px solid #ff4422;
+  box-shadow:0 0 16px rgba(255,80,0,0.8),inset 0 2px 5px rgba(255,255,255,0.35);
+  position:absolute;
+  top:-14px;
+  left:50%;transform:translateX(-50%);
+  transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.lever-base{
+  width:30px;height:18px;
+  background:linear-gradient(180deg,#5a4010,#3a2800);
+  border:2px solid #8b6914;
+  border-radius:5px;
+  margin-top:2px;
+  box-shadow:0 0 8px rgba(255,180,0,0.15);
+}
+/* pulled state */
+.lever-outer.pulled .lever-rod{transform:rotate(-20deg);}
+.lever-outer.pulled .lever-ball{box-shadow:0 0 8px rgba(255,80,0,0.3);}
+.lever-outer.pulled .lever-hint{display:none;}
+.lever-outer.locked{cursor:default;}
+
+/* countdown */
+.countdown-wrap{display:none;flex-direction:column;align-items:center;gap:4px;}
+.cring{position:relative;width:68px;height:68px;}
+.cring svg{transform:rotate(-90deg);}
+.cring circle{fill:none;stroke:rgba(255,215,0,0.12);stroke-width:5;}
+.cring .prog{stroke:#ffd700;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset 0.4s linear;}
+.cring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;color:#ffd700;}
+
+/* result */
+.result-area{
+  display:none;flex-direction:column;align-items:center;
+  gap:20px;width:100%;animation:fadeUp .7s ease-out;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.group-badge{padding:22px 48px;border-radius:20px;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.big-letter{font-size:clamp(4rem,18vw,6rem);font-weight:900;line-height:1;animation:glow 2s ease-in-out infinite;}
+@keyframes glow{0%,100%{filter:brightness(1);}50%{filter:brightness(1.6) drop-shadow(0 0 24px currentColor);}}
+.big-gname{font-size:clamp(1rem,4vw,1.4rem);font-weight:700;letter-spacing:3px;}
+.congrats{font-size:.95rem;font-weight:600;color:rgba(255,255,255,0.55);line-height:1.8;}
+.mates-box{width:100%;border-radius:16px;padding:20px;background:rgba(255,255,255,0.03);}
+.mates-title{font-size:.65rem;letter-spacing:3px;color:rgba(255,255,255,0.3);text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.07);text-align:center;}
+.mate-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;margin-bottom:7px;font-size:.9rem;font-weight:700;opacity:0;transform:translateX(-20px);transition:opacity 0.4s ease,transform 0.4s ease;}
+.mate-row.visible{opacity:1;transform:translateX(0);}
+.beers{display:flex;gap:10px;font-size:1.8rem;justify-content:center;animation:wave 1.2s ease-in-out infinite;}
+@keyframes wave{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.reset-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:50px;color:rgba(255,255,255,0.5);font-size:.8rem;font-weight:700;letter-spacing:2px;padding:12px 28px;cursor:pointer;text-transform:uppercase;transition:all .25s;}
+.reset-btn:hover{background:rgba(255,255,255,0.12);color:#fff;}
+.fw-c{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden;}
+.fw{position:absolute;border-radius:50%;animation:fwE 1s ease-out forwards;}
+@keyframes fwE{0%{opacity:1;transform:translate(0,0);}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0);}}
+@media(max-width:520px){.sm-lever{right:-46px!important;width:52px!important;}.lever-knob{width:42px!important;height:42px!important;top:-21px!important;box-shadow:0 0 30px rgba(255,215,0,1),0 0 55px rgba(255,140,0,.7),inset 0 2px 3px rgba(255,255,255,.4)!important;}.lever-rod{width:15px!important;box-shadow:0 0 22px rgba(255,215,0,.9)!important;}.lever-hint{font-size:.8rem!important;font-weight:800!important;color:#ffd700!important;}}
+.other-groups-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:50px;color:rgba(255,255,255,.6);font-size:.8rem;font-weight:700;letter-spacing:2px;padding:10px 24px;cursor:pointer;text-transform:uppercase;transition:all .25s;}
+.other-groups-btn:hover{background:rgba(255,255,255,.12);color:#fff;}
+.other-groups-panel{display:none;width:100%;border-radius:14px;overflow:hidden;border:1px solid rgba(255,215,0,.2);margin-top:4px;}
+.og-group{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06);}
+.og-group:last-child{border-bottom:none;}
+.og-head{font-size:.72rem;font-weight:900;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+.og-team{font-size:.85rem;padding:5px 0;opacity:.75;display:flex;align-items:center;gap:8px;}
+@keyframes coinDrop{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(60px) scale(.4);}}
+.coin-slot-wrap{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;}
+.coin-slot-wrap.coin-ready .coin-slot{border-color:#ffd700!important;animation:coinGlow 1s ease-in-out infinite;}
+.coin-slot-wrap.coin-inserted .coin-slot{border-color:#00ff88!important;box-shadow:0 0 12px #00ff88!important;}
+@keyframes coinGlow{0%,100%{box-shadow:0 0 6px #ffd700;}50%{box-shadow:0 0 22px #ffd700;}}
+#teamDisplay{display:none;font-size:clamp(.95rem,4vw,1.3rem);font-weight:900;letter-spacing:3px;text-align:center;margin:5px 0 2px;padding:7px 22px;border-radius:50px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.35);color:#ffd700;}
+`;
+
+  const innerHTML = `
+<div class="fw-c" id="fwc"></div>
+<div class="wrap">
+  <div class="logo">🏓 Beerpong Turnier 2026</div>
+  <div id="teamDisplay"></div>
+  <div class="page-title">🎰 AUSLOSUNG</div>
+
+  <div class="selector-box" id="selectorBox">
+    <div class="selector-label">👇 Welches Team bist du?</div>
+    <select class="team-select" id="teamSelect" onchange="onTeamSelect()">
+      <option value="">-- Team auswählen --</option>
+    </select>
+    <button class="go-btn" id="goBtn" onclick="goToMachine()" disabled>🎰 ZUR SLOT MACHINE!</button>
+  </div>
+
+  <div class="machine-screen" id="machineScreen">
+    <div class="spin-status" id="spinStatus">👆 Zieh den Hebel!</div>
+
+    <div class="cabinet-wrap">
+      <div class="cabinet">
+        <div class="cabinet-top-bar"></div>
+        <div class="cabinet-label">🎰 GRUPPEN SLOT 🎰</div>
+        <div class="reel-frame">
+          <div class="reel-window">
+            <div class="reel" id="reel"></div>
+          </div>
+          <div class="reel-lines"></div>
+        </div>
+        <div class="lights-row">
+          <div class="dlight"></div><div class="dlight"></div><div class="dlight"></div>
+          <div class="dlight"></div><div class="dlight"></div>
+        </div>
+      </div>
+      <div class="lever-outer" id="leverWrap" onclick="pullLever()">
+        <div class="lever-hint" id="leverHint">ZIEHEN</div>
+        <div class="lever-rod-wrap">
+          <div class="lever-rod" id="leverRod">
+            <div class="lever-ball" id="leverBall"></div>
+          </div>
+        </div>
+        <div class="lever-base"></div>
+      </div>
+    </div>
+
+    <div class="countdown-wrap" id="countdownWrap">
+      <div class="cring">
+        <svg width="68" height="68" viewBox="0 0 68 68">
+          <circle cx="34" cy="34" r="29"/>
+          <circle class="prog" id="progCircle" cx="34" cy="34" r="29" stroke-dasharray="182" stroke-dashoffset="0"/>
+        </svg>
+        <div class="cring-num" id="countNum">30</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-area" id="resultArea">
+    <div class="group-badge" id="groupBadge">
+      <div class="big-letter" id="bigLetter"></div>
+      <div class="big-gname" id="bigGname"></div>
+    </div>
+    <div class="congrats" id="congratsTxt"></div>
+    <div class="mates-box" id="matesBox" style="display:none">
+      <div class="mates-title">👥 Eure Gruppe</div>
+      <div id="matesList"></div>
+    </div>
+    <div class="beers">🍺🏓🏆🏓🍺</div>
+    <button class="other-groups-btn" onclick="toggleOtherGroups(this)">👁 Andere Gruppen anzeigen</button>
+    <div class="other-groups-panel" id="otherGroupsPanel"></div>
+    <button class="reset-btn" onclick="resetPage()">↩ Anderes Team</button>
+  </div>
+</div>
+`;
+
+  const innerJS = `
+(function(){
+  var RESULTS = ${DR};
+  var GNAMES  = ${GN};
+  var COLORS  = ${GC};
+  var BG      = ${GB};
+  var ITEM_H  = 140;
+
+  var sel = document.getElementById('teamSelect');
   RESULTS.forEach(function(r){
-    var o=document.createElement('option');o.value=r.team;o.textContent=r.team;
+    var o = document.createElement('option');
+    o.value = r.team; o.textContent = r.team;
     sel.appendChild(o);
   });
-  var ph=document.createElement('option');ph.value='';ph.textContent='-- Team auswählen --';
-  sel.insertBefore(ph,sel.firstChild);sel.value='';
 
-  var coinInserted=false;
-
-  window.onTeamSelect=function(){
+  window.onTeamSelect = function(){
+    document.getElementById('goBtn').disabled = sel.value === '';
     var td=document.getElementById('teamDisplay');
-    var csw=document.getElementById('coinSlotWrap');
-    var cl=document.getElementById('coinLabel');
-    var lv=document.getElementById('leverEl');
-    var hint=document.getElementById('leverHint');
-    var rod=document.getElementById('leverRod');
-    // reset coin state on new selection
-    coinInserted=false;
-    lv.classList.add('locked');
-    rod.classList.remove('idle-anim');
-    hint.innerHTML='⬆ Münze<br>einwerfen';
-    hint.classList.remove('active');
-    if(csw){csw.classList.remove('coin-ready');csw.classList.remove('coin-inserted');}
-    if(cl){cl.textContent='🪙 INSERT COIN';}
-    document.getElementById('spinStatus').textContent='Wähle dein Team!';
-    if(sel.value!==''){
-      td.textContent='👤 '+sel.value;
-      td.style.display='block';
-      if(csw)csw.classList.add('coin-ready');
-      document.getElementById('spinStatus').textContent='🪙 Münze einwerfen!';
-    } else {
-      td.style.display='none';
-    }
+    if(sel.value!==''){if(td){td.textContent='👤 '+sel.value;td.style.display='block';}}else{if(td){td.style.display='none';}}
   };
 
+  var currentEntry = null;
+  var leverPulled  = false;
+  var coinInserted = false;
+
+  window.goToMachine = function(){
+    var name = sel.value; if(!name) return;
+    currentEntry = RESULTS.find(function(r){ return r.team === name; });
+    if(!currentEntry) return;
+    coinInserted=true;
+    var csw=document.getElementById('coinSlotWrap');
+    if(csw){csw.classList.remove('coin-inserted');csw.classList.add('coin-ready');}
+    var cl=document.getElementById('coinLabel');if(cl){cl.textContent='🪙 INSERT COIN';}
+    document.getElementById('selectorBox').style.display='none';
+    document.getElementById('machineScreen').style.display='flex';
+    buildReel(currentEntry);
+  };
   window.insertCoin=function(){
-    if(!sel.value||coinInserted)return;
+    if(coinInserted||!currentEntry)return;
     coinInserted=true;
     var csw=document.getElementById('coinSlotWrap');
     var cl=document.getElementById('coinLabel');
-    var lv=document.getElementById('leverEl');
-    var hint=document.getElementById('leverHint');
-    var rod=document.getElementById('leverRod');
     if(csw){csw.classList.remove('coin-ready');csw.classList.add('coin-inserted');}
     if(cl){cl.textContent='✅ EINGEWORFEN';}
-    document.getElementById('spinStatus').textContent='✅ Jetzt Hebel ziehen!';
-    lv.classList.remove('locked');
-    hint.textContent='⬇ Ziehen!';
-    hint.classList.add('active');
-    rod.classList.add('idle-anim');
-    // coin drop animation
     var coin=document.createElement('div');
     coin.style.cssText='position:fixed;font-size:1.8rem;z-index:9999;pointer-events:none;animation:coinDrop .65s ease-in forwards;';
     coin.textContent='🪙';
@@ -457,130 +678,249 @@ body{
     setTimeout(function(){coin.remove();},800);
   };
 
-  var spinning=false;
-  window.startSpin=function(){
-    if(spinning||!coinInserted)return;
-    var teamName=sel.value;if(!teamName)return;
-    var entry=RESULTS.find(function(r){return r.team===teamName;});if(!entry)return;
-    spinning=true;
-    var rod=document.getElementById('leverRod');
-    var lv=document.getElementById('leverEl');
-    lv.classList.add('locked');
-    rod.classList.remove('idle-anim');
-    rod.classList.add('pulled');
-    setTimeout(function(){
-      rod.classList.remove('pulled');
-    },500);
-    document.getElementById('selectorBox').style.display='none';
-    document.getElementById('spinStatus').textContent='Dreht sich...';
-    setTimeout(function(){runSlot(entry,teamName);},750);
-  };
+  function buildReel(entry){
+    var nGroups = GNAMES.length;
+    var gIdx    = entry.groupIdx;
+    var items   = [];
 
-  function runSlot(entry,teamName){
-    var gIdx=entry.groupIdx,gName=GNAMES[gIdx],gColor=COLORS[gIdx],gBg=BG[gIdx];
-    var gLetter=String.fromCharCode(65+gIdx);
-    var mates=(entry.groupMembers||[]).filter(function(t){return t!==teamName;});
-    var nG=GNAMES.length;
-    var items=[],FAST_N=60*nG,SLOW_N=nG*2;
-    for(var i=0;i<FAST_N;i++){var g=i%nG;items.push({letter:String.fromCharCode(65+g),name:GNAMES[g],color:COLORS[g]});}
-    for(var s=0;s<SLOW_N;s++){var g2=s%nG;items.push({letter:String.fromCharCode(65+g2),name:GNAMES[g2],color:COLORS[g2]});}
-    var overG=(gIdx+1)%nG;
-    items.push({letter:String.fromCharCode(65+overG),name:GNAMES[overG],color:COLORS[overG]});
-    var overIdx=items.length-1;
-    items.push({letter:gLetter,name:gName,color:gColor});
-    var tIdx=items.length-1;
-    var reel=document.getElementById('reel');
-    reel.innerHTML='';
-    items.forEach(function(item){
-      var el=document.createElement('div');el.className='reel-item';
-      el.innerHTML='<div class="reel-letter" style="color:'+item.color+';text-shadow:0 0 24px '+item.color+'99">'+item.letter+'</div>'
-        +'<div class="reel-gname" style="color:'+item.color+'">'+item.name+'</div>';
+    // Phase 1: fast spin (800 items)
+    for(var i=0;i<800;i++) items.push(i % nGroups);
+
+    // Phase 2: fake settle on WRONG group (slow down, almost stop)
+    var fakeG = (gIdx + Math.floor(nGroups/2)) % nGroups;
+    for(var f=0;f<3;f++) items.push((fakeG - 1 + f + nGroups) % nGroups);
+
+    // Phase 3: re-accelerate (2 full cycles)
+    for(var r2=0;r2<nGroups*2;r2++) items.push((fakeG + 1 + r2) % nGroups);
+
+    // Phase 4: slow down to correct group
+    items.push((gIdx - 2 + nGroups) % nGroups);
+    items.push((gIdx - 1 + nGroups) % nGroups);
+    items.push(gIdx);
+
+    var reel = document.getElementById('reel');
+    reel.innerHTML = '';
+    items.forEach(function(g){
+      var el = document.createElement('div'); el.className = 'reel-item';
+      el.innerHTML = '<div class="reel-letter" style="color:'+COLORS[g]+';text-shadow:0 0 18px '+COLORS[g]+'88">'+String.fromCharCode(65+g)+'</div>'
+        + '<div class="reel-gname" style="color:'+COLORS[g]+'">'+GNAMES[g]+'</div>';
       reel.appendChild(el);
     });
-    reel.style.transition='none';reel.style.transform='translateY(0)';
-    var T1=21000,T2=4800,T3=650,T4=900,REVEAL=29000;
-    setTimeout(function(){reel.style.transition='transform '+T1+'ms cubic-bezier(0.08,0,0.1,1)';reel.style.transform='translateY(-'+(FAST_N*ITEM_H)+'px)';},60);
-    setTimeout(function(){reel.style.transition='transform '+T2+'ms cubic-bezier(0.35,0,0.05,1)';reel.style.transform='translateY(-'+((FAST_N+SLOW_N)*ITEM_H)+'px)';},T1+80);
-    setTimeout(function(){reel.style.transition='transform '+T3+'ms cubic-bezier(0.2,0,0.5,1)';reel.style.transform='translateY(-'+(overIdx*ITEM_H)+'px)';},T1+T2+100);
-    setTimeout(function(){reel.style.transition='transform '+T4+'ms cubic-bezier(0.175,0.885,0.32,1.55)';reel.style.transform='translateY(-'+(tIdx*ITEM_H)+'px)';},T1+T2+T3+150);
-    var cr=document.getElementById('cring'),cp=document.getElementById('cprog'),cn=document.getElementById('cringNum');
-    cr.style.display='block';cp.style.strokeDashoffset='0';
-    var t0=Date.now();
-    var cInt=setInterval(function(){var e=(Date.now()-t0)/1000,r=Math.max(0,SPIN_SECS-e);cn.textContent=Math.ceil(r);cp.style.strokeDashoffset=String(138*(e/SPIN_SECS));if(r<=0)clearInterval(cInt);},100);
-    var msgs=['Dreht sich...','🍺 Beerpong Spirit!','Spannung steigt...','Fast da...','🤏 Fingers crossed!','Wer wird es sein?','🎉 Gleich!'];
-    var mi=0,ste=document.getElementById('spinStatus');ste.textContent=msgs[0];
-    var sInt=setInterval(function(){mi=(mi+1)%msgs.length;ste.textContent=msgs[mi];},4000);
-    setTimeout(function(){clearInterval(sInt);clearInterval(cInt);showResult(gIdx,gName,gColor,gBg,gLetter,mates,teamName);},REVEAL);
+    reel.style.transition = 'none';
+    reel.style.transform   = 'translateY(0)';
+    window._reelItems = items;
+    window._reelTotal = items.length;
   }
 
-  function showResult(gIdx,gName,gColor,gBg,gLetter,mates,teamName){
-    document.getElementById('cring').style.display='none';
-    document.getElementById('spinStatus').textContent='';
-    document.getElementById('machineScene').style.display='none';
-    var badge=document.getElementById('groupBadge');
-    badge.style.border='2px solid '+gColor;badge.style.background=gBg;badge.style.boxShadow='0 0 60px '+gColor+'44';
-    document.getElementById('bigLetter').textContent=gLetter;document.getElementById('bigLetter').style.color=gColor;
-    document.getElementById('bigGname').textContent=gName;document.getElementById('bigGname').style.color=gColor;
-    // keep teamDisplay visible during result
-    var td=document.getElementById('teamDisplay');
-    if(teamName){td.textContent='👤 '+teamName;td.style.display='block';}
-    document.getElementById('congratsTxt').innerHTML='🏆 <strong style="color:'+gColor+'">'+teamName+'</strong> ist in der <strong style="color:'+gColor+'">'+gName+'</strong>!';
-    document.getElementById('resultArea').style.display='flex';
-    fw(gColor);fw(gColor);
-    setTimeout(function(){fw(gColor);},600);setTimeout(function(){fw(gColor);},1200);setTimeout(function(){fw(gColor);},2200);
+  window.pullLever = function(){
+    if(leverPulled || !currentEntry) return;
+    leverPulled = true;
+    document.getElementById('leverWrap').classList.add('pulled','locked');
+    document.getElementById('spinStatus').textContent = '🎰 Dreht sich...';
+    document.getElementById('countdownWrap').style.display = 'flex';
+    setTimeout(function(){ runSpin(currentEntry); }, 450);
+  };
+
+  function runSpin(entry){
+    var items    = window._reelItems;
+    var total    = window._reelTotal;
+    var targetIdx= total - 1;
+    var nGroups  = GNAMES.length;
+    var reel     = document.getElementById('reel');
+
+    var schedule = [];
+    var t = 0;
+
+    // FAST: 800 items at 33ms each (~26.4s)
+    for(var i=0;i<800;i++){
+      t += 33;
+      schedule.push({idx:i+1,delay:t});
+    }
+
+    // FAKE SETTLE: 3 items, slowing 250 → 500 → 900ms
+    var fakeSlows = [250, 500, 900];
+    for(var f=0;f<3;f++){
+      t += fakeSlows[f];
+      schedule.push({idx:800+f+1,delay:t});
+    }
+    var fakePauseAt = t;
+
+    // RE-ACCELERATE: nGroups*2 items, speeds 600 down to 55ms
+    var reItems = nGroups*2;
+    for(var r2=0;r2<reItems;r2++){
+      var spd = Math.max(55, 600 - Math.floor(r2*(545/reItems)));
+      t += spd;
+      schedule.push({idx:803+r2+1,delay:t});
+    }
+
+    // FINAL SLOW: 3 items
+    var finalSlows = [280, 520, 850];
+    for(var s=0;s<3;s++){
+      t += finalSlows[s];
+      schedule.push({idx:803+reItems+s+1,delay:t});
+    }
+
+    var totalMs = t;
+
+    // Apply all steps
+    schedule.forEach(function(sc){
+      setTimeout(function(){
+        reel.style.transition = 'transform 0.07s ease-out';
+        reel.style.transform  = 'translateY(-'+(sc.idx*ITEM_H)+'px)';
+      }, sc.delay);
+    });
+
+    // Final bounce snap
     setTimeout(function(){
-      var allInGroup=RESULTS.filter(function(r){return r.groupIdx===gIdx;}).map(function(r){return r.team;});
-      if(allInGroup.length>0){
-        var mb=document.getElementById('matesBox'),ml=document.getElementById('matesList');
+      reel.style.transition = 'transform 0.7s cubic-bezier(0.175,0.885,0.32,1.45)';
+      reel.style.transform  = 'translateY(-'+(targetIdx*ITEM_H)+'px)';
+    }, totalMs + 130);
+
+    // Status messages
+    var msgs = [
+      '🎰 Dreht sich...','🍺 Beerpong Spirit!','Spannung steigt...',
+      '😬 Fast!','😲 Ohh — nochmal!','🔄 Nochmal!','🎯 Jetzt wirklich...','🎉 Gleich!'
+    ];
+    var mIdx = 0;
+    var statusEl = document.getElementById('spinStatus');
+    var statusInt = setInterval(function(){
+      mIdx = (mIdx+1) % msgs.length;
+      statusEl.textContent = msgs[mIdx];
+    }, 4200);
+    // fake-settle moment messages
+    setTimeout(function(){ statusEl.textContent = '😮 Fast da...'; }, fakePauseAt - 300);
+    setTimeout(function(){ statusEl.textContent = '😱 Nochmal!!'; }, fakePauseAt + 400);
+
+    // Countdown
+    var circ  = document.getElementById('progCircle');
+    var numEl = document.getElementById('countNum');
+    var circumference = 182;
+    var countStart = Date.now();
+    numEl.textContent = Math.ceil(totalMs/1000);
+    var countInt = setInterval(function(){
+      var el2 = (Date.now()-countStart)/1000;
+      var rem  = Math.max(0, totalMs/1000 - el2);
+      numEl.textContent = Math.ceil(rem);
+      circ.style.strokeDashoffset = String(circumference*(el2/(totalMs/1000)));
+      if(rem<=0) clearInterval(countInt);
+    }, 120);
+
+    // Show result
+    setTimeout(function(){
+      clearInterval(statusInt);
+      clearInterval(countInt);
+      showResult(entry);
+    }, totalMs + 1300);
+  }
+
+  function showResult(entry){
+    var gIdx   = entry.groupIdx;
+    var gName  = GNAMES[gIdx];
+    var gColor = COLORS[gIdx];
+    var gBg    = BG[gIdx];
+    var gLetter= String.fromCharCode(65+gIdx);
+    var teamName = entry.team;
+    var mates  = (entry.groupMembers||[]).filter(function(t){ return t!==entry.team; });
+
+    document.getElementById('machineScreen').style.display = 'none';
+    var td=document.getElementById('teamDisplay');if(td){td.textContent='👤 '+teamName;td.style.display='block';}
+
+    var badge = document.getElementById('groupBadge');
+    badge.style.border     = '2px solid '+gColor;
+    badge.style.background = gBg;
+    badge.style.boxShadow  = '0 0 60px '+gColor+'44';
+    document.getElementById('bigLetter').textContent = gLetter;
+    document.getElementById('bigLetter').style.color = gColor;
+    document.getElementById('bigGname').textContent  = gName;
+    document.getElementById('bigGname').style.color  = gColor;
+    document.getElementById('congratsTxt').innerHTML =
+      'Willkommen in der <strong style="color:'+gColor+'">'+gName+'</strong>!<br>Viel Spaß &mdash; auf Bier &amp; Bronze! 🍺🏆';
+
+    document.getElementById('resultArea').style.display = 'flex';
+    fw(gColor);fw(gColor);
+    setTimeout(function(){fw(gColor);},600);
+    setTimeout(function(){fw(gColor);},1300);
+    setTimeout(function(){fw(gColor);},2200);
+
+    setTimeout(function(){
+      if(mates.length>0){
+        var mb=document.getElementById('matesBox');
+        var ml=document.getElementById('matesList');
         mb.style.border='1px solid '+gColor+'44';
-        allInGroup.forEach(function(name){
-          var row=document.createElement('div');row.className='mate-row';
-          row.style.background=gBg;row.style.border='1px solid '+gColor+'33';
+        var allInGroup=RESULTS.filter(function(r){return r.groupIdx===gIdx;}).map(function(r){return r.team;});
+        var teamList=allInGroup.length?allInGroup:mates;
+        teamList.forEach(function(name,i){
+          var row=document.createElement('div'); row.className='mate-row';
+          row.style.background=gBg;
+          row.style.border='1px solid '+gColor+'33';
           var icon=name===teamName?'⭐':'🏓';
           var tag=name===teamName?' <span style="font-size:.7rem;opacity:.55;">(du)</span>':'';
           row.innerHTML='<span>'+icon+'</span>'+name+tag;
           ml.appendChild(row);
+          setTimeout(function(){row.classList.add('visible');}, i*2000);
         });
+        // other groups
+        var panel=document.getElementById('otherGroupsPanel');
+        if(panel){panel.innerHTML='';GNAMES.forEach(function(gn,gi){if(gi===gIdx)return;var gc=COLORS[gi],gbg=BG[gi];var div=document.createElement('div');div.className='og-group';div.style.background=gbg;var head=document.createElement('div');head.className='og-head';head.style.color=gc;head.textContent=String.fromCharCode(65+gi)+' – '+gn;div.appendChild(head);RESULTS.filter(function(r){return r.groupIdx===gi;}).forEach(function(r){var row=document.createElement('div');row.className='og-team';row.innerHTML='<span>🏓</span>'+r.team;div.appendChild(row);});panel.appendChild(div);});}
         mb.style.display='block';
       }
-    },900);
+    }, 900);
   }
 
-  window.resetPage=function(){
-    coinInserted=false;
-    spinning=false;
-    document.getElementById('resultArea').style.display='none';
-    document.getElementById('matesList').innerHTML='';
-    document.getElementById('matesBox').style.display='none';
-    document.getElementById('machineScene').style.display='flex';
-    var reel=document.getElementById('reel');reel.innerHTML='<div class="reel-item"><div class="reel-letter" style="color:#ffd700;text-shadow:0 0 20px #ffd70088">?</div><div class="reel-gname" style="color:#ffd700">Wähle Team</div></div>';
-    document.getElementById('teamSelect').value='';
-    document.getElementById('leverEl').classList.add('locked');
-    var rod=document.getElementById('leverRod');rod.classList.remove('pulled');rod.classList.remove('idle-anim');
-    document.getElementById('leverHint').innerHTML='⬆ Team<br>wählen';
-    document.getElementById('leverHint').classList.remove('active');
-    document.getElementById('selectorBox').style.display='flex';
-    document.getElementById('spinStatus').textContent='Wähle dein Team!';
-    document.getElementById('cring').style.display='none';
-    document.getElementById('teamDisplay').style.display='none';
-    var csw=document.getElementById('coinSlotWrap');
-    if(csw){csw.classList.remove('coin-ready');csw.classList.remove('coin-inserted');}
-    var cl=document.getElementById('coinLabel');
-    if(cl){cl.textContent='🪙 INSERT COIN';}
+  window.resetPage = function(){
+    leverPulled = false; currentEntry = null;
+    document.getElementById('resultArea').style.display    = 'none';
+    document.getElementById('machineScreen').style.display = 'none';
+    document.getElementById('selectorBox').style.display   = 'flex';
+    coinInserted=true;
+    var csw2=document.getElementById('coinSlotWrap');if(csw2){csw2.classList.remove('coin-ready','coin-inserted');}
+    var cl2=document.getElementById('coinLabel');if(cl2){cl2.textContent='🪙 INSERT COIN';}
+    var td2=document.getElementById('teamDisplay');if(td2){td2.style.display='none';}
+    var p2=document.getElementById('otherGroupsPanel');if(p2){p2.style.display='none';p2.innerHTML='';}
+    document.getElementById('matesList').innerHTML  = '';
+    document.getElementById('matesBox').style.display = 'none';
+    document.getElementById('reel').innerHTML = '';
+    document.getElementById('teamSelect').value = '';
+    document.getElementById('goBtn').disabled = true;
+    var lw = document.getElementById('leverWrap');
+    lw.classList.remove('pulled','locked');
+    document.getElementById('leverHint').style.display = '';
+    document.getElementById('spinStatus').textContent = '👆 Zieh den Hebel!';
+    document.getElementById('countdownWrap').style.display = 'none';
+    document.getElementById('progCircle').style.strokeDashoffset = '0';
   };
 
-  function fw(col){
-    var c=document.getElementById('fwc');
-    var cols=[col,'#ffd700','#ff4500','#fff','#ff69b4','#00bfff'];
+  function fw(c){
+    var el=document.getElementById('fwc');
+    var cols=[c,'#ffd700','#ff4500','#fff','#ff69b4','#00bfff'];
     var cx=10+Math.random()*80,cy=5+Math.random()*55;
     for(var i=0;i<55;i++){
       var p=document.createElement('div');p.className='fw';
       var a=(i/55)*Math.PI*2,d=80+Math.random()*150;
-      p.style.cssText='left:'+cx+'%;top:'+cy+'%;background:'+cols[~~(Math.random()*cols.length)]+';width:'+(3+Math.random()*5)+'px;height:'+(3+Math.random()*5)+'px;--tx:'+Math.cos(a)*d+'px;--ty:'+Math.sin(a)*d+'px;animation-duration:'+(0.8+Math.random()*.7)+'s;animation-delay:'+Math.random()*.3+'s;';
-      c.appendChild(p);setTimeout(function(){p.remove();},2500);
+      p.style.cssText='left:'+cx+'%;top:'+cy+'%;background:'+cols[~~(Math.random()*cols.length)]+';width:'+(3+Math.random()*5)+'px;height:'+(3+Math.random()*5)+'px;--tx:'+Math.cos(a)*d+'px;--ty:'+Math.sin(a)*d+'px;animation-duration:'+(0.8+Math.random()*0.7)+'s;animation-delay:'+Math.random()*0.3+'s;';
+      el.appendChild(p);setTimeout(function(){p.remove();},2500);
     }
   }
 })();
+`;
+
+  return `<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>🏓 Beerpong Turnier - Gruppenauslosung</title>
+<style>${innerCSS}</style>
+</head>
+<body>
+${innerHTML}
+<script>${innerJS}<\/script>
+</body>
+</html>`;
+}
+
+buildGroupNameInputs();
+buildTeamInputs();
 </script>
 </body>
 </html>
