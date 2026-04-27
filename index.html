@@ -215,10 +215,10 @@ body::before{
 .fw{position:absolute;border-radius:50%;animation:fwE 1s ease-out forwards;}
 @keyframes fwE{0%{opacity:1;transform:translate(0,0);}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0);}}
 @media(max-width:520px){
-  
-  
-  
-  
+  .lever-outer{right:-36px!important;width:32px!important;}
+  .lever-rod{height:100px!important;width:6px!important;}
+  .lever-ball{width:20px!important;height:20px!important;top:-10px!important;}
+  .lever-base{width:22px!important;}
   .cabinet{width:calc(100vw - 110px)!important;}
 }
   .page-title{font-size:clamp(1.3rem,6vw,1.8rem);letter-spacing:2px;}
@@ -226,11 +226,11 @@ body::before{
   .reel-window{height:110px!important;}
   .machine-screen{gap:8px;}
   .spin-status{font-size:.75rem;}
-  
-  
-  
-  
-  
+  .lever-outer{right:-36px!important;width:32px!important;}
+  .lever-rod{height:100px!important;width:6px!important;}
+  .lever-ball{width:20px!important;height:20px!important;top:-10px!important;}
+  .lever-base{width:22px!important;}
+  .lever-hint{font-size:.5rem!important;}
 }
 .other-groups-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:50px;color:rgba(255,255,255,.6);font-size:.8rem;font-weight:700;letter-spacing:2px;padding:10px 24px;cursor:pointer;text-transform:uppercase;transition:all .25s;}
 .other-groups-btn:hover{background:rgba(255,255,255,.12);color:#fff;}
@@ -280,8 +280,10 @@ body::before{
           <div class="dlight"></div><div class="dlight"></div><div class="dlight"></div>
           <div class="dlight"></div><div class="dlight"></div>
         </div>
-        <button class="start-btn start-btn-glow" id="startBtn" onclick="onStartBtn()">START</button>
+        </div>
       </div>
+      <button class="start-btn start-btn-glow" id="startBtn" onclick="onStartBtn()">START</button>
+    </div>
         </div>
         <div class="lever-base"></div>
       </div>
@@ -317,8 +319,8 @@ body::before{
 
 <script>
 (function(){
-  var RESULTS = [{"team":"Die Untrinkbaren","groupIdx":0,"groupMembers":["Die Untrinkbaren","Triple Threat","Hopfen & Malz"]},{"team":"Prost Pals","groupIdx":1,"groupMembers":["Prost Pals","Die Bouncer","Golden Cups"]},{"team":"Biber am Ball","groupIdx":2,"groupMembers":["Biber am Ball","Die Bierkönige","Nass & Spaß"]},{"team":"Shot Stars","groupIdx":3,"groupMembers":["Shot Stars","Schaum Alarm","Schaumkronen FC"]},{"team":"Triple Threat","groupIdx":0,"groupMembers":["Die Untrinkbaren","Triple Threat","Hopfen & Malz"]},{"team":"Die Bouncer","groupIdx":1,"groupMembers":["Prost Pals","Die Bouncer","Golden Cups"]},{"team":"Die Bierkönige","groupIdx":2,"groupMembers":["Biber am Ball","Die Bierkönige","Nass & Spaß"]},{"team":"Schaum Alarm","groupIdx":3,"groupMembers":["Shot Stars","Schaum Alarm","Schaumkronen FC"]},{"team":"Hopfen & Malz","groupIdx":0,"groupMembers":["Die Untrinkbaren","Triple Threat","Hopfen & Malz"]},{"team":"Golden Cups","groupIdx":1,"groupMembers":["Prost Pals","Die Bouncer","Golden Cups"]},{"team":"Nass & Spaß","groupIdx":2,"groupMembers":["Biber am Ball","Die Bierkönige","Nass & Spaß"]},{"team":"Schaumkronen FC","groupIdx":3,"groupMembers":["Shot Stars","Schaum Alarm","Schaumkronen FC"]}];
-  var GNAMES  = ["Gruppe A","Gruppe B","Gruppe C","Gruppe D"];
+  var RESULTS = [{"team":"Schaumkronen FC","groupIdx":0,"groupMembers":["Schaumkronen FC","Shot Stars","Flüssige Energie","Nass & Spaß","Die Bouncer","Golden Cups"]},{"team":"Die Bierkönige","groupIdx":1,"groupMembers":["Die Bierkönige","Biber am Ball","Schaum Alarm","Splash Brothers","Die Untrinkbaren"]},{"team":"Triple Threat","groupIdx":2,"groupMembers":["Triple Threat","Prost Pals","Tisch Typen","No Mercy","Hopfen & Malz"]},{"team":"Shot Stars","groupIdx":0,"groupMembers":["Schaumkronen FC","Shot Stars","Flüssige Energie","Nass & Spaß","Die Bouncer","Golden Cups"]},{"team":"Biber am Ball","groupIdx":1,"groupMembers":["Die Bierkönige","Biber am Ball","Schaum Alarm","Splash Brothers","Die Untrinkbaren"]},{"team":"Prost Pals","groupIdx":2,"groupMembers":["Triple Threat","Prost Pals","Tisch Typen","No Mercy","Hopfen & Malz"]},{"team":"Flüssige Energie","groupIdx":0,"groupMembers":["Schaumkronen FC","Shot Stars","Flüssige Energie","Nass & Spaß","Die Bouncer","Golden Cups"]},{"team":"Schaum Alarm","groupIdx":1,"groupMembers":["Die Bierkönige","Biber am Ball","Schaum Alarm","Splash Brothers","Die Untrinkbaren"]},{"team":"Tisch Typen","groupIdx":2,"groupMembers":["Triple Threat","Prost Pals","Tisch Typen","No Mercy","Hopfen & Malz"]},{"team":"Nass & Spaß","groupIdx":0,"groupMembers":["Schaumkronen FC","Shot Stars","Flüssige Energie","Nass & Spaß","Die Bouncer","Golden Cups"]},{"team":"Splash Brothers","groupIdx":1,"groupMembers":["Die Bierkönige","Biber am Ball","Schaum Alarm","Splash Brothers","Die Untrinkbaren"]},{"team":"No Mercy","groupIdx":2,"groupMembers":["Triple Threat","Prost Pals","Tisch Typen","No Mercy","Hopfen & Malz"]},{"team":"Die Bouncer","groupIdx":0,"groupMembers":["Schaumkronen FC","Shot Stars","Flüssige Energie","Nass & Spaß","Die Bouncer","Golden Cups"]},{"team":"Die Untrinkbaren","groupIdx":1,"groupMembers":["Die Bierkönige","Biber am Ball","Schaum Alarm","Splash Brothers","Die Untrinkbaren"]},{"team":"Hopfen & Malz","groupIdx":2,"groupMembers":["Triple Threat","Prost Pals","Tisch Typen","No Mercy","Hopfen & Malz"]},{"team":"Golden Cups","groupIdx":0,"groupMembers":["Schaumkronen FC","Shot Stars","Flüssige Energie","Nass & Spaß","Die Bouncer","Golden Cups"]}];
+  var GNAMES  = ["Gruppe A","Gruppe B","Gruppe C"];
   var COLORS  = ["#ff7070","#7aaaff","#70ff70","#ffd070"];
   var BG      = ["rgba(255,80,80,0.15)","rgba(80,140,255,0.15)","rgba(80,220,80,0.15)","rgba(255,190,60,0.15)"];
   var ITEM_H  = 140;
@@ -350,7 +352,9 @@ body::before{
     var cl=document.getElementById('coinLabel');if(cl){cl.textContent='🪙 INSERT COIN';}
     document.getElementById('selectorBox').style.display='none';
     document.getElementById('machineScreen').style.display='flex';
-    buildReel(currentEntry);
+  var sb=document.getElementById('startBtn');
+  if(sb){ sb.disabled=false; sb.classList.add('start-btn-glow'); sb.onclick=onStartBtn; }
+  buildReel(currentEntry);
   };
   window.insertCoin=function(){
     if(coinInserted||!currentEntry)return;
@@ -546,9 +550,9 @@ body::before{
     setTimeout(function(){fw(gColor);},2200);
 
     setTimeout(function(){
-      if(mates.length>0){
+      if(true){
         var mb=document.getElementById('matesBox');
-        var ml=document.getElementById('matesList');
+        var ml=document.getElementById('matesList'); ml.innerHTML='';
         mb.style.border='1px solid '+gColor+'44';
         var allInGroup=RESULTS.filter(function(r){return r.groupIdx===gIdx;}).map(function(r){return r.team;});
         var teamList=allInGroup.length?allInGroup:mates;
@@ -570,7 +574,15 @@ body::before{
     }, 900);
   }
 
-  window.resetPage = function(){
+  window.toggleOtherGroups = function(btn){
+  var panel=document.getElementById('otherGroupsPanel');
+  if(!panel) return;
+  var open = panel.style.display==='block';
+  panel.style.display = open ? 'none' : 'block';
+  if(btn){ btn.textContent = open ? '👁 Andere Gruppen anzeigen' : '🙈 Andere Gruppen ausblenden'; }
+};
+
+window.resetPage = function(){
     leverPulled = false; currentEntry = null;
     document.getElementById('resultArea').style.display    = 'none';
     document.getElementById('machineScreen').style.display = 'none';
@@ -585,7 +597,7 @@ body::before{
     document.getElementById('reel').innerHTML = '';
     document.getElementById('teamSelect').value = '';
     document.getElementById('goBtn').disabled = true;
-    if(sl2){sl2.style.display='';sl2.textContent='▶ START';}
+   
     
     document.getElementById('spinStatus').textContent = '🔴 Drück START!';
     document.getElementById('countdownWrap').style.display = 'none';
